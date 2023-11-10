@@ -2,22 +2,19 @@ import pygame
 import random
 import math
 
-def tuple_adder(tuple_list):
+def tuple_adder(tuple_list): #This function given a list of tuples, adds each of the same index elements together and returns a tuple containing those sums.
     return_tup = (0,0)
     for tup in tuple_list:
         return_tup = (return_tup[0]+tup[0],return_tup[1]+tup[1])
     return return_tup
 
-def tuple_scaler(input_tuple,scalar):
+def tuple_scaler(input_tuple,scalar): #This function given a tuple and scalar, multiplies all the elements of the tuple by that value.
     return_tuple = tuple()
     for i in range(0,len(input_tuple)):
         return_tuple += tuple([input_tuple[i] * scalar])
     return return_tuple
 
-def tuple_x_reflector(input_tuple):
-    return (input_tuple[0],input_tuple[1]*-1)
-
-def ext_atan(input_tuple):
+def ext_atan(input_tuple): #Given a point in space this function calculates that points angle respective to the positive x-axis. The result is an angle in the range [-pi,pi)
     return_angle = float(0)
     if input_tuple[0]>0 and input_tuple[1]==0:
         return_angle = 0
@@ -37,16 +34,18 @@ def ext_atan(input_tuple):
         return_angle = math.atan(input_tuple[1]/input_tuple[0])
     return return_angle
 
-def linear_rotate_transform(input_tuple,rotate_angle):
+def linear_rotate_transform(input_tuple,rotate_angle): #This function given a point about the origin and an angle respective to the positive x-axis, rotates that point about the origin by that angle and returns the new location of the point.
     return (math.cos(rotate_angle)*input_tuple[0]-math.sin(rotate_angle)*input_tuple[1],math.sin(rotate_angle)*input_tuple[0]+math.cos(rotate_angle)*input_tuple[1])
 
-def light_multiplier_calculator(tri_center_tuple,object_center_tuple,light_tuple):
+def light_multiplier_calculator(tri_center_tuple,object_center_tuple,light_tuple): #This function takes in the center of a triangle respective to the triangles origin, the center of an object respective to the game screen, and the center of a light source respective to the game screen, and returns a multiplier for the light brightness of that polygon to the light source.
     center_angle = angle_rebounder(ext_atan(tri_center_tuple))
     light_angle = angle_rebounder(ext_atan(tuple_adder([object_center_tuple,tuple_scaler(light_tuple,-1)])))
     difference_angle = angle_rebounder((center_angle - light_angle))
-    #return math.fabs(-(math.cos(difference_angle/2)) + 1)
-    #return math.fabs( -1*math.fabs(difference_angle/math.pi) + 1)
-    return math.fabs(difference_angle/math.pi)
+#These lines below, contain different manipulations of the light gradient function. The top two are trigonometric while the bottom two are absolute-value linear.
+    #return math.fabs(-(math.cos(difference_angle/2)) + 1) #Old light calc
+    #return math.fabs( -1*math.fabs(difference_angle/math.pi) + 1) #Old light calc
+    #return math.fabs(difference_angle/math.pi) #Old light calc
+    return math.fabs((math.fabs(difference_angle/math.pi)+1)/2) #current light calc
 
 def angle_rebounder(input_angle): #Recaptures a given angle into the range (-pi,pi]
     if math.sin(input_angle) > 0:
@@ -61,60 +60,115 @@ def angle_rebounder(input_angle): #Recaptures a given angle into the range (-pi,
     return
 
 class ship():
-    def __init__():
-        pass
+    def __init__(self,center_x=0,center_y=0,poly_mesh=[[(0,0),(1,0),(0,1)]],poly_scale=20,ship_angle=0):
+        #Initialize Variables
+        self.ship_center_x = center_x
+        self.ship_center_y = center_y
+        self.ship_angle = ship_angle
+        self.base_mesh = poly_mesh
+        self.transform_mesh = [[j for j in i] for i in self.base_mesh]
+        self.translate_mesh = [[j for j in i] for i in self.base_mesh]
+        self.mesh_scale = poly_scale
+        self.ship_velocity = 0
+        self.ship_angular_velocity = 0
+        return
+
+    def frame(self,button,screen_width,screen_height):
+        #Check steering
+        if button[pygame.K_LEFT]:
+            self.ship_angular_velocity = -math.pi/25
+        if button[pygame.K_RIGHT]:
+            self.ship_angular_velocity = math.pi/25
+        # Angle Rollover
+        if self.ship_angular_velocity > 0:
+            self.ship_angular_velocity -= math.pi / 400
+        if self.ship_angular_velocity < 0:
+            self.ship_angular_velocity += math.pi / 400
+        # Reduce Angular Velocity to zero
+        if round(self.ship_angular_velocity,2)==0:
+            self.ship_angular_velocity = 0
+        # Bound Angular Velocity [-pi/25,pi/25]
+        if self.ship_angular_velocity > math.pi/25:
+            self.ship_angular_velocity = math.pi/25
+        if self.ship_angular_velocity < -math.pi/25:
+            self.ship_angular_velocity = -math.pi/25
+        # Check drive
+        if button[pygame.K_UP]:
+            self.ship_velocity += 0.3
+        else:
+            self.ship_velocity -= 0.1 #Reduce velocity when no key pressed
+        # Bound velocity
+        if self.ship_velocity > 6:
+            self.ship_velocity = 5
+        if self.ship_velocity < 0:
+            self.ship_velocity = 0
+        # Apply velocities
+        self.ship_angle += self.ship_angular_velocity
+        self.ship_angle = angle_rebounder(self.ship_angle)
+        self.ship_center_x += self.ship_velocity*math.cos(self.ship_angle)
+        self.ship_center_y += self.ship_velocity*math.sin(self.ship_angle)
+        # Wrap ship
+        if self.ship_center_x < 0:
+            self.ship_center_x = screen_width
+        if self.ship_center_x > screen_width:
+            self.ship_center_x = 0
+        if self.ship_center_y < 0:
+            self.ship_center_y = screen_height
+        if self.ship_center_y > screen_height:
+            self.ship_center_y = 0
+        #Rotate base mesh and store to transform mesh
+        for individual_polygon_index in range(0, len(self.base_mesh)):  # individual_polygon in polygon_structure:
+            for point_index in range(0, len(self.base_mesh[individual_polygon_index])):
+                self.transform_mesh[individual_polygon_index][point_index] = tuple_scaler(
+                    linear_rotate_transform(self.base_mesh[individual_polygon_index][point_index], self.ship_angle),
+                    self.mesh_scale)
+        #Move(translate) transform mesh to the ship coordinates and store to translate mesh
+        for individual_polygon_index in range(0, len(self.transform_mesh)):
+            for point_index in range(0, len(self.transform_mesh[individual_polygon_index])):
+                self.translate_mesh[individual_polygon_index][point_index] = tuple_adder(
+                    [self.transform_mesh[individual_polygon_index][point_index],
+                     (self.ship_center_x, self.ship_center_y)])    
+        return
+
+    def get_rotate_mesh(self): #Returns the rotated mesh
+        return self.transform_mesh
+
+    def get_final_mesh(self): #Returns the translated rotated mesh
+        return self.translate_mesh
+    
+    def get_ship_coords(self): #Returns the ships centerpoint coordinates respective to the game screen
+        return (self.ship_center_x,self.ship_center_y)
+
+    def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.
+        for single_polygon_index in range(0,len(self.translate_mesh)):
+            pygame.draw.polygon(screen,
+                tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),self.translate_mesh[single_polygon_index])
+        return
 
 def main():
     pygame.init() #Initialize game screen
 
+#Initilaize Game Variables
+    #Screen variables
     screen_width = 800
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Programming fundamentals")
-
-    #light_source_x = screen_width // 2
-    light_source_x = 345
-    #light_source_y = screen_height // 2
-    light_source_y = 332
-
+    pygame.display.set_caption("Planettoids Beta v1.1")
+    bg = pygame.image.load("background1.png") #NOTE: For future implementation we should load these images into sprites to speed up the draw commands
+    #Light Source Variables
+    light_source_x = 345 #screen_width // 2
+    light_source_y = 332 #screen_height // 2
+    #Title text objects
     font_object_title = pygame.font.Font('AmazDooMLeft.ttf', 100)
     text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
     text_surface_rect = text_surface.get_rect()
     text_surface_rect.center = (screen_width // 2, screen_height // 5)
+    #Initialize Player Ship
+    ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
+    player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh)
 
-    font_object_debug = pygame.font.Font('TI-83P Font.ttf', 32)
-    text_surface_debug = font_object_debug.render("0", True, (255, 255, 255))
-    text_surface_rect_debug = text_surface_debug.get_rect()
-    text_surface_rect_debug.center = (50, 20)
-
-    character_x_pos = screen_width // 2  # 100
-    character_y_pos = screen_height // 2  # 100
-    character_width = 50
-    character_height = 50
-
-    ball_angle_x = 0
-    ball_angle_z = 0
-    ball_traject_radius = 100
-
-    polygon_center_x = screen_width // 2
-    polygon_center_y = screen_height // 2
-
-    # polygon_structure = [[(0,0),(1,0),(0,1)],[(0,0),(-1,0),(0,-1)],[(0,0),(1,0),(0,-1)],[(0,0),(-1,0),(0,1)]]
-    # polygon_structure = [[(0,0),(2,-1),(2,1)],[(0,0),(2,1),(1,2)],[(0,0),(0,2),(1,2)],[(0,0),(1,2),(-1,2)],[(0,0),(-1,2),(-2,1)],[(0,0),(-2,1),(-2,-1)],[(0,0),(-2,-1),(-1,-2)],[(0,0),(-1,-2),(1,-2)],[(0,0),(1,-2),(2,-1)]]
-    #polygon_structure = [[(0, 0), linear_rotate_transform((1, 0), 2 * math.pi * (i / 16)),linear_rotate_transform((1, 0), 2 * math.pi * ((i + 1) / 16))] for i in range(1, 16 + 1)]
-    # polygon_structure = [[(0,0),linear_rotate_transform((1,0),2*math.pi*(i/32)),linear_rotate_transform((1,0),2*math.pi*((i+1)/32))] for i in range(1,32+1)]
-    polygon_structure = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
-
-    polygon_current_transform = [[j for j in i] for i in polygon_structure]
-    polygon_current_instantiation = [[j for j in i] for i in polygon_structure]
-    polygon_angle = 0
-    polygon_scale = 20
-    polygon_velocity = 0
-    polygon_angular_velocity = 0
-
-    bg = pygame.image.load("background1.png")
-
-    running = True
+#Main Gameplay Loop
+    running = True #Main execution boolean
     while running == True:
         for event in pygame.event.get():
             pass
@@ -124,108 +178,16 @@ def main():
 
         button = pygame.key.get_pressed()
 
- # Angle Moving
-        if button[pygame.K_LEFT]:
-            #polygon_angular_velocity -= math.pi / 50
-            polygon_angular_velocity = -math.pi/25
-        if button[pygame.K_RIGHT]:
-            #polygon_angular_velocity += math.pi / 50
-            polygon_angular_velocity = math.pi/25
+        player_ship.frame(button,screen_width,screen_height)
 
-        # Angle Rollover
-        if polygon_angular_velocity > 0:
-            polygon_angular_velocity -= math.pi / 400
-        if polygon_angular_velocity < 0:
-            polygon_angular_velocity += math.pi / 400
-            
-        if round(polygon_angular_velocity,2)==0:
-            polygon_angular_velocity = 0
-
-        if polygon_angular_velocity > math.pi/25:
-            polygon_angular_velocity = math.pi/25
-        if polygon_angular_velocity < -math.pi/25:
-            polygon_angular_velocity = -math.pi/25
-        
-        if button[pygame.K_UP]:
-            polygon_velocity += 0.3
-        else:
-            polygon_velocity -= 0.1
-        if polygon_velocity > 6:
-            polygon_velocity = 5
-        if polygon_velocity < 0:
-            polygon_velocity = 0
-
-        #if button[pygame.K_LEFT]:
-        #    character_x_pos -= 1
-        #if button[pygame.K_RIGHT]:
-        #    character_x_pos += 1
-        #if button[pygame.K_UP]:
-        #    character_y_pos -= 1
-        #if button[pygame.K_DOWN]:
-        #    character_y_pos += 1
-
-        ball_angle_x += math.pi / 100 / 4
-        if ball_angle_x > 2 * math.pi:
-            ball_angle_x = -2 * math.pi
-        ball_angle_z += math.pi / 100 / 4
-        if ball_angle_z > math.pi:
-            ball_angle_z = -math.pi
-
-        polygon_angle += polygon_angular_velocity
-        polygon_angle = angle_rebounder(polygon_angle)
-        character_x_pos += polygon_velocity*math.cos(polygon_angle)
-        character_y_pos += polygon_velocity*math.sin(polygon_angle)
-
-        if character_x_pos - polygon_scale < 0:
-            character_x_pos = 0 + polygon_scale
-        if character_y_pos - polygon_scale < 0:
-            character_y_pos = 0 + polygon_scale
-        if character_x_pos + polygon_scale > screen_width:
-            character_x_pos = screen_width - polygon_scale
-        if character_y_pos + polygon_scale > screen_height:
-            character_y_pos = screen_height - polygon_scale
-
-        for individual_polygon_index in range(0, len(polygon_structure)):  # individual_polygon in polygon_structure:
-            for point_index in range(0, len(polygon_structure[individual_polygon_index])):
-                polygon_current_transform[individual_polygon_index][point_index] = tuple_scaler(
-                    linear_rotate_transform(polygon_structure[individual_polygon_index][point_index], polygon_angle),
-                    polygon_scale)
-
-        polygon_center_x = character_x_pos
-        polygon_center_y = character_y_pos
-
-        for individual_polygon_index in range(0, len(polygon_current_transform)):
-            for point_index in range(0, len(polygon_current_transform[individual_polygon_index])):
-                polygon_current_instantiation[individual_polygon_index][point_index] = tuple_adder(
-                    [polygon_current_transform[individual_polygon_index][point_index],
-                     (polygon_center_x, polygon_center_y)])
-
-        # Draw Commands
-        #screen.fill((0, 0, 0))
+    #Draw Operations
+        #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
         screen.blit(bg,(0,0))
         screen.blit(text_surface, text_surface_rect)
-        text_surface_debug = font_object_debug.render(str(polygon_angle) + " " + str((ext_atan(
-            tuple_adder([(polygon_center_x, polygon_center_y), tuple_scaler((light_source_x, light_source_y), -1)])))),
-                                                      True, (255, 255, 255))
-        screen.blit(text_surface_debug, text_surface_rect_debug)
-        #pygame.draw.circle(screen, (0x00, 0x00, 0xFF), (screen_width // 2, screen_height // 2), 90)
-        #if ball_angle_z > 0:
-        #    pygame.draw.circle(screen, (0xFF * math.fabs(math.sin(ball_angle_z)), 255 * math.fabs(math.sin(ball_angle_z)),255 * math.fabs(math.sin(ball_angle_z))),(screen_width // 2 + ball_traject_radius * math.cos(ball_angle_x), screen_height // 2),10 * (1 + math.sin(ball_angle_z)))
-        #pygame.draw.rect(screen,tuple([random.randint(0, 255) for i in range(0, 3)]),(character_x_pos, character_y_pos, character_width, character_height))
+        # Draw Ship
+        player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
 
-        # Draw Polygon
-        for single_polygon_index in range(0,len(polygon_current_instantiation)):
-            pygame.draw.polygon(screen,
-                tuple_scaler((0,0,0xFF),light_multiplier_calculator(tuple_scaler(tuple_adder(polygon_current_transform[single_polygon_index]), 1 / 3),(polygon_center_x, polygon_center_y), (light_source_x, light_source_y))),
-                polygon_current_instantiation[single_polygon_index])
-
-            # pygame.draw.circle(screen,[(0xFF,0,0),(0,0xFF,0),(0,0,0xFF),(0,0xFF,0xFF),(0xFF,0,0xFF),(0xFF,0xFF,0),(0x7F,0x7F,0x7F),(0xFF,0x7F,0),(0xFF,0x7F,0),(0,0,0xFF)][1-single_polygon_index],tuple_adder([tuple_scaler(tuple_adder(polygon_current_transform[single_polygon_index]),1/3),(polygon_center_x,polygon_center_y)]),5)
-
-        #pygame.time.Clock().tick(60)
         pygame.display.flip()
-
-        # (255*math.floor(math.sin(ball_angle_z))
-
 
 if __name__ == "__main__":
     main()
