@@ -18,8 +18,6 @@ pygame.display.set_caption('Programming Fundamentals')  # Names the game window
 x_coordinate = 800  # Starting Coordinates
 y_coordinate = 450
 
-player_sprite = pygame.image.load('Player Sprite.png')
-
 running = True
 pygame.time.Clock().tick(60)
 
@@ -50,7 +48,6 @@ while running:
     if button[pygame.K_ESCAPE]:
         break
     # if button[pygame.K_a]:
-
 
     '''This block of code handles the screen wrapping'''
 
