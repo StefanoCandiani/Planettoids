@@ -1,3 +1,9 @@
+"""
+Created By: Phoenix Cushman, Stefano Candiani, Joel Kubinsky, Danush Singla
+Date: 11/3/2023 - XX/XX/2023
+Project: Project 4: Group Game, "Planettoids"
+"""
+#import libraries
 import pygame
 import random
 import math
@@ -59,6 +65,9 @@ def angle_rebounder(input_angle): #Recaptures a given angle into the range (-pi,
             return math.pi
     return
 
+def negative_angle(input_angle):
+    return angle_rebounder(input_angle + math.pi)
+
 class ship():
     def __init__(self,center_x=0,center_y=0,poly_mesh=[[(0,0),(1,0),(0,1)]],poly_scale=20,ship_angle=0):
         #Initialize Variables
@@ -69,44 +78,68 @@ class ship():
         self.transform_mesh = [[j for j in i] for i in self.base_mesh]
         self.translate_mesh = [[j for j in i] for i in self.base_mesh]
         self.mesh_scale = poly_scale
-        self.ship_velocity = 0
-        self.ship_angular_velocity = 0
+
+        self.ship_velocity_x = 0
+        self.ship_velocity_y = 0
+
+        self.ship_thrust_multiplier = 7
+
         return
 
     def frame(self,button,screen_width,screen_height):
+    #Controls and Movement Section
         #Check steering
         if button[pygame.K_LEFT]:
-            self.ship_angular_velocity = -math.pi/25
+            self.ship_angle -= math.pi/25
         if button[pygame.K_RIGHT]:
-            self.ship_angular_velocity = math.pi/25
-        # Angle Rollover
-        if self.ship_angular_velocity > 0:
-            self.ship_angular_velocity -= math.pi / 400
-        if self.ship_angular_velocity < 0:
-            self.ship_angular_velocity += math.pi / 400
-        # Reduce Angular Velocity to zero
-        if round(self.ship_angular_velocity,2)==0:
-            self.ship_angular_velocity = 0
-        # Bound Angular Velocity [-pi/25,pi/25]
-        if self.ship_angular_velocity > math.pi/25:
-            self.ship_angular_velocity = math.pi/50
-        if self.ship_angular_velocity < -math.pi/25:
-            self.ship_angular_velocity = -math.pi/50
-        # Check drive
-        if button[pygame.K_UP]:
-            self.ship_velocity += 0.3
-        else:
-            self.ship_velocity -= 0.1 #Reduce velocity when no key pressed
-        # Bound velocity
-        if self.ship_velocity > 6:
-            self.ship_velocity = 2
-        if self.ship_velocity < 0:
-            self.ship_velocity = 0
-        # Apply velocities
-        self.ship_angle += self.ship_angular_velocity
+            self.ship_angle += math.pi/25
         self.ship_angle = angle_rebounder(self.ship_angle)
-        self.ship_center_x += self.ship_velocity*math.cos(self.ship_angle)
-        self.ship_center_y += self.ship_velocity*math.sin(self.ship_angle)
+        # Check thrust
+        if button[pygame.K_UP]:
+            self.ship_velocity_x += math.cos(self.ship_angle)
+            self.ship_velocity_y += math.sin(self.ship_angle)
+        
+        self.ship_velocity_x -= 0.25*math.cos((ext_atan((self.ship_velocity_x,self.ship_velocity_y))))
+        self.ship_velocity_y -= 0.25*math.sin((ext_atan((self.ship_velocity_x,self.ship_velocity_y))))
+
+        if round(self.ship_velocity_x,2)==0:
+            self.ship_velocity_x = 0
+        if round(self.ship_velocity_y,2)==0:
+            self.ship_velocity_y = 0
+
+        '''
+        else:
+            #Reduce velocity when no key pressed
+            if self.ship_velocity_x > 0:
+                self.ship_velocity_x -= 0.1
+            elif self.ship_velocity_x < 0:
+                self.ship_velocity_x += 0.1
+            if self.ship_velocity_y > 0:
+                self.ship_velocity_y -= 0.1
+            elif self.ship_velocity_y < 0:
+                self.ship_velocity_y += 0.1
+            #Truncate off the velocity to get it to zero
+            if round(self.ship_velocity_x,1)==0:
+                self.ship_velocity_x = 0
+            if round(self.ship_velocity_y,1)==0:
+                self.ship_velocity_y = 0
+        '''
+
+        # Bound velocity
+        if self.ship_velocity_x > 10:
+            self.ship_velocity_x = 10
+        if self.ship_velocity_x < -10:
+            self.ship_velocity_x = -10
+        if self.ship_velocity_y > 10:
+            self.ship_velocity_y = 10
+        if self.ship_velocity_y < -10:
+            self.ship_velocity_y = -10
+
+        # Apply velocities
+        self.ship_center_x += self.ship_velocity_x
+        self.ship_center_y += self.ship_velocity_y
+
+    #Collision Section
         # Wrap ship
         if self.ship_center_x < 0:
             self.ship_center_x = screen_width
@@ -116,6 +149,7 @@ class ship():
             self.ship_center_y = screen_height
         if self.ship_center_y > screen_height:
             self.ship_center_y = 0
+    #Math Section
         #Rotate base mesh and store to transform mesh
         for individual_polygon_index in range(0, len(self.base_mesh)):  # individual_polygon in polygon_structure:
             for point_index in range(0, len(self.base_mesh[individual_polygon_index])):
@@ -140,9 +174,20 @@ class ship():
         return (self.ship_center_x,self.ship_center_y)
 
     def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.
-        for single_polygon_index in range(0,len(self.translate_mesh)):
-            pygame.draw.polygon(screen,
-                tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),self.translate_mesh[single_polygon_index])
+        if location_tuple != self.get_ship_coords:
+            temp_translate_mesh = [[j for j in i] for i in self.base_mesh]
+            for individual_polygon_index in range(0, len(self.transform_mesh)):
+                for point_index in range(0, len(self.transform_mesh[individual_polygon_index])):
+                    temp_translate_mesh[individual_polygon_index][point_index] = tuple_adder(
+                        [self.transform_mesh[individual_polygon_index][point_index],
+                         location_tuple])
+            for single_polygon_index in range(0,len(self.translate_mesh)):
+                pygame.draw.polygon(screen,
+                    tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),temp_translate_mesh[single_polygon_index])
+        else:
+            for single_polygon_index in range(0,len(self.translate_mesh)):
+                pygame.draw.polygon(screen,
+                    tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),self.translate_mesh[single_polygon_index])
         return
 
 def main():
@@ -186,6 +231,8 @@ def main():
         screen.blit(text_surface, text_surface_rect)
         # Draw Ship
         player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
+        player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(70,0)]))
+
 
         pygame.display.flip()
 
