@@ -23,11 +23,11 @@ def main():
     text_surface_rect.center = (screen_width // 2, screen_height // 5)
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
-    player_ship = ship(0,screen_height,ship_mesh)
+    player_ship = ship(screen_width,screen_height,ship_mesh)
 
 #Main Gameplay Loop
     running = True #Main execution boolean
-    while running == True:
+    while running:
         button = pygame.key.get_pressed()
 
         for event in pygame.event.get():
@@ -48,7 +48,7 @@ def main():
         center = player_ship.get_ship_coords()
         ship_max_dist = player_ship.get_scaler()
 
-    # Handles all of the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
+    # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
 
         if center[0] + ship_max_dist > screen_width:
             player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), center[1]))
@@ -59,8 +59,18 @@ def main():
         if center[1] - ship_max_dist < 0:
             player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), (center[0], (center[1] + screen_height)))
 
+    # Corner wrapping
+        if center[0] + ship_max_dist > screen_width and center[1] + ship_max_dist > screen_height:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), (center[1] - screen_height)))
+        if center[0] - ship_max_dist < 0 and center[1] + ship_max_dist > screen_height:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), (center[1] - screen_height)))
+        if center[0] - ship_max_dist < 0 and center[1] - ship_max_dist < 0:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), (center[1] + screen_height)))
+        if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), (center[1] + screen_height)))
 
         pygame.display.flip()
+
 
 if __name__ == '__main__':
     main()
