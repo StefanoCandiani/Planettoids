@@ -46,7 +46,7 @@ def main():
         player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
 
         center = player_ship.get_ship_coords()
-        ship_max_dist = player_ship.get_scaler()
+        ship_max_dist = player_ship.get_mesh_scaler()
 
     # Handles all of the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
 

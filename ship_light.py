@@ -138,6 +138,9 @@ class ship():
     
     def get_ship_coords(self): #Returns the ships centerpoint coordinates respective to the game screen
         return (self.ship_center_x,self.ship_center_y)
+    
+    def get_mesh_scaler(self):
+        return self.mesh_scale
 
     def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.
         #Custom draw location
