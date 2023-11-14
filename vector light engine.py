@@ -140,9 +140,17 @@ class ship():
         return (self.ship_center_x,self.ship_center_y)
 
     def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.
-        for single_polygon_index in range(0,len(self.translate_mesh)):
-            pygame.draw.polygon(screen,
-                tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),self.translate_mesh[single_polygon_index])
+        #Custom draw location
+        if location_tuple != self.get_ship_coords():
+            temp_translate_polygon = [(0,0),(0,0),(0,0)] #Create an empty polygon initialize the variable
+            for single_polygon_index in range(0,len(self.transform_mesh)): #Loop through the transform mesh translating and drawing each of the polygons one at a time
+                for point_index in range(0, len(self.transform_mesh[single_polygon_index])): #Fill in the temp_translate_polygon with the custom-location-translated version of that polygon in the transform_mesh
+                    temp_translate_polygon[point_index] = tuple_adder([self.transform_mesh[single_polygon_index][point_index],location_tuple])
+                pygame.draw.polygon(screen,tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),temp_translate_polygon)
+        #Regular draw location same as ship location
+        else:
+            for single_polygon_index in range(0,len(self.translate_mesh)):
+                pygame.draw.polygon(screen,tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple, light_source_tuple)),self.translate_mesh[single_polygon_index])
         return
 
 def main():
@@ -186,6 +194,7 @@ def main():
         screen.blit(text_surface, text_surface_rect)
         # Draw Ship
         player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
+        player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(300,0)]))
 
         pygame.display.flip()
 
