@@ -1,78 +1,66 @@
 import pygame
 import math
-
-pygame.init()
-
-
-def linear_rotate_transform(input_tuple, rotate_angle):
-    return math.cos(rotate_angle) * input_tuple[0] - math.sin(rotate_angle) * input_tuple[1], math.sin(rotate_angle) * input_tuple[0] + math.cos(rotate_angle) * input_tuple[1]
+from ship_light import ship
 
 
-screen_width = 1600
-screen_height = 800
-screen = pygame.display.set_mode((screen_width, screen_height))  # Sets the screen size
+def main():
+    pygame.init() #Initialize game screen
 
-pygame.display.set_caption('Programming Fundamentals')  # Names the game window
+#Initilaize Game Variables
+    #Screen variables
+    screen_width = 800
+    screen_height = 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Planettoids Beta v1.1")
+    bg = pygame.image.load("background1.png") #NOTE: For future implementation we should load these images into sprites to speed up the draw commands
+    #Light Source Variables
+    light_source_x = 345 #screen_width // 2
+    light_source_y = 332 #screen_height // 2
+    #Title text objects
+    font_object_title = pygame.font.Font('AmazDooMLeft.ttf', 100)
+    text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
+    text_surface_rect = text_surface.get_rect()
+    text_surface_rect.center = (screen_width // 2, screen_height // 5)
+    #Initialize Player Ship
+    ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
+    player_ship = ship(0,screen_height,ship_mesh)
+
+#Main Gameplay Loop
+    running = True #Main execution boolean
+    while running == True:
+        button = pygame.key.get_pressed()
+
+        for event in pygame.event.get():
+            pass
+        if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
+            running = False
+            continue
+
+        player_ship.frame(button,screen_width,screen_height)
+
+    #Draw Operations
+        #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
+        screen.blit(bg,(0,0))
+        screen.blit(text_surface, text_surface_rect)
+        # Draw Ship
+        player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
+
+        center = player_ship.get_ship_coords()
+        ship_max_dist = player_ship.get_scaler()
+
+    # Handles all of the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
+
+        if center[0] + ship_max_dist > screen_width:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), center[1]))
+        if center[0] - ship_max_dist < 0:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), center[1]))
+        if center[1] + ship_max_dist > screen_height:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), (center[0], (center[1] - screen_height)))
+        if center[1] - ship_max_dist < 0:
+            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), (center[0], (center[1] + screen_height)))
 
 
-x_coordinate = 800  # Starting Coordinates
-y_coordinate = 450
+        pygame.display.flip()
 
-running = True
-pygame.time.Clock().tick(60)
-
-while running:
-    screen.fill('black')  # Keeps the screen background from filling up with after images
-
-    pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, y_coordinate), (x_coordinate, (y_coordinate + 20)), ((x_coordinate - 10), (y_coordinate - 10))))
-    # Draws the Left half of the player
-
-    pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, y_coordinate), (x_coordinate, (y_coordinate + 20)), ((x_coordinate + 10), (y_coordinate - 10))))
-    # Draws the Right half of the player
-
-    for event in pygame.event.get():
-        pass
-    if event.type == pygame.QUIT:
-        break
-
-    button = pygame.key.get_pressed()  # Gets key inputs
-
-    if button[pygame.K_LEFT]:  # Moves Left
-        x_coordinate -= 1
-    if button[pygame.K_RIGHT]:  # Moves Right
-        x_coordinate += 1
-    if button[pygame.K_UP]:  # Moves Up
-        y_coordinate -= 1
-    if button[pygame.K_DOWN]:  # Moves Down
-        y_coordinate += 1
-    if button[pygame.K_ESCAPE]:
-        break
-    # if button[pygame.K_a]:
-
-    '''This block of code handles the screen wrapping'''
-
-    if x_coordinate < 0:  #
-        x_coordinate = screen_width
-    if y_coordinate < 0:
-        y_coordinate = screen_height
-    if x_coordinate > screen_width:
-        x_coordinate = 0
-    if y_coordinate > screen_height:
-        y_coordinate = 0
-
-    '''Draws a copy of the player character on the opposite side of the screen in case the players stops on an edge'''
-
-    if x_coordinate + 10 > screen_width:
-        pygame.draw.polygon(screen, (255, 255, 255), (((x_coordinate - screen_width), y_coordinate), (x_coordinate - screen_width, y_coordinate + 20), ((x_coordinate + 10 - screen_width), (y_coordinate - 10))))
-    if x_coordinate - 10 < 0:
-        pygame.draw.polygon(screen, (255, 255, 255), (((x_coordinate + screen_width), y_coordinate), ((x_coordinate + screen_width), (y_coordinate + 20)), ((x_coordinate - 10 + screen_width), (y_coordinate - 10))))
-    if y_coordinate + 20 > screen_height:
-        pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, y_coordinate - screen_height), (x_coordinate, (y_coordinate + 20 - screen_height)), ((x_coordinate + 10), (y_coordinate - 10 - screen_height))))
-        pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, y_coordinate - screen_height), (x_coordinate, (y_coordinate + 20 - screen_height)), ((x_coordinate - 10), (y_coordinate - 10 - screen_height))))
-    if y_coordinate - 10 < 0:
-        pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, (y_coordinate + screen_height)), (x_coordinate, (y_coordinate + 20 + screen_height)), ((x_coordinate + 10), (y_coordinate - 10 + screen_height))))
-        pygame.draw.polygon(screen, (255, 255, 255), ((x_coordinate, (y_coordinate + screen_height)), (x_coordinate, (y_coordinate + 20 + screen_height)), ((x_coordinate - 10), (y_coordinate - 10 + screen_height))))
-
-    print(x_coordinate, y_coordinate)  # Prints the current coordinates of the center if the player shape
-
-    pygame.display.flip()
+if __name__ == '__main__':
+    main()
