@@ -89,9 +89,9 @@ class ship():
             self.ship_angular_velocity = 0
         # Bound Angular Velocity [-pi/25,pi/25]
         if self.ship_angular_velocity > math.pi/25:
-            self.ship_angular_velocity = math.pi/25
+            self.ship_angular_velocity = math.pi/50
         if self.ship_angular_velocity < -math.pi/25:
-            self.ship_angular_velocity = -math.pi/25
+            self.ship_angular_velocity = -math.pi/50
         # Check drive
         if button[pygame.K_UP]:
             self.ship_velocity += 0.3
@@ -99,7 +99,7 @@ class ship():
             self.ship_velocity -= 0.1 #Reduce velocity when no key pressed
         # Bound velocity
         if self.ship_velocity > 6:
-            self.ship_velocity = 5
+            self.ship_velocity = 2
         if self.ship_velocity < 0:
             self.ship_velocity = 0
         # Apply velocities
