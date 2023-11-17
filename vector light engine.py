@@ -98,7 +98,7 @@ class ship():
         if button[pygame.K_UP]:
             self.ship_velocity_x += math.cos(self.ship_angle)
             self.ship_velocity_y += math.sin(self.ship_angle)
-        
+
         self.ship_velocity_x -= 0.25*math.cos((ext_atan((self.ship_velocity_x,self.ship_velocity_y))))
         self.ship_velocity_y -= 0.25*math.sin((ext_atan((self.ship_velocity_x,self.ship_velocity_y))))
 
@@ -126,14 +126,13 @@ class ship():
         '''
 
         # Bound velocity
-        if self.ship_velocity_x > 10:
-            self.ship_velocity_x = 10
-        if self.ship_velocity_x < -10:
-            self.ship_velocity_x = -10
-        if self.ship_velocity_y > 10:
-            self.ship_velocity_y = 10
-        if self.ship_velocity_y < -10:
-            self.ship_velocity_y = -10
+        if math.sqrt(((self.ship_velocity_x)**2)+((self.ship_velocity_y)**2)) > 10:
+            ship_velocity_x = tuple_scaler((self.ship_velocity_x, self.ship_velocity_y),
+                                           10 / math.sqrt(((self.ship_velocity_x) ** 2) + ((self.ship_velocity_y) ** 2)))[
+                0]
+            ship_velocity_y = tuple_scaler((self.ship_velocity_x, self.ship_velocity_y),
+                                           10 / math.sqrt(((self.ship_velocity_x) ** 2) + ((self.ship_velocity_y) ** 2)))[
+                1]
 
         # Apply velocities
         self.ship_center_x += self.ship_velocity_x
@@ -236,7 +235,7 @@ def main():
         player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
         player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(70,0)]))
 
-
+        pygame.time.Clock().tick(60)
         pygame.display.flip()
 
 if __name__ == "__main__":
