@@ -172,6 +172,9 @@ class ship():
     
     def get_ship_coords(self): #Returns the ships centerpoint coordinates respective to the game screen
         return (self.ship_center_x,self.ship_center_y)
+    
+    def get_mesh_scaler(self):
+        return self.mesh_scale
 
     def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.
         if location_tuple != self.get_ship_coords:
@@ -230,8 +233,8 @@ def main():
         screen.blit(bg,(0,0))
         screen.blit(text_surface, text_surface_rect)
         # Draw Ship
-        player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
-        player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(70,0)]))
+        player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
+        player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(70,0)]))
 
 
         pygame.display.flip()
