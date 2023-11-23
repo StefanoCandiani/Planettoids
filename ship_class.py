@@ -27,14 +27,14 @@ class ship():
     def frame(self,button,screen_width,screen_height):
         #Check steering
         if button[pygame.K_LEFT]:
-            self.ship_angle += -math.pi/37.5
+            self.ship_angle += -math.pi/25
         if button[pygame.K_RIGHT]:
-            self.ship_angle += math.pi/37.5
+            self.ship_angle += math.pi/25
+        #Apply friction
+        self.ship_velocity = tuple_adder([self.ship_velocity,tuple_scaler(linear_rotate_transform(self.ship_velocity,math.pi),self.friction_coefficient)])            
         #Apply Thrust
         if button[pygame.K_UP]:
             self.ship_velocity = tuple_adder([self.ship_velocity,(self.thrust_coefficient*math.cos(self.ship_angle),self.thrust_coefficient*math.sin(self.ship_angle))])
-        #Apply friction
-        self.ship_velocity = tuple_adder([self.ship_velocity,tuple_scaler(linear_rotate_transform(self.ship_velocity,math.pi),self.friction_coefficient)])            
         #Bound velocity
         if tuple_mag(self.ship_velocity) > 10:
             self.ship_velocity = tuple_scaler(self.ship_velocity,(10/tuple_mag(self.ship_velocity)))
