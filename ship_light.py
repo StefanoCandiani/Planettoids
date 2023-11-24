@@ -199,6 +199,7 @@ def main():
         player_ship.draw_ship(screen,(0,0,0xFF),(light_source_x, light_source_y),player_ship.get_ship_coords())
         player_ship.draw_ship(screen,(0xFF,0,0xFF),(light_source_x, light_source_y),tuple_adder([player_ship.get_ship_coords(),(300,0)]))
 
+        # pygame.time.Clock().tick(50)
         pygame.display.flip()
 
 if __name__ == "__main__":
