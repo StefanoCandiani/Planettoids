@@ -19,13 +19,13 @@ class Legend:
         # creates the icon
         image = pygame.image.load('assets/up_arrow_off.png')
         image = pygame.transform.scale(image, (50,50)) # image size: 745 by 648, 220 x 263 for arrow and 450x350 for box
-        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 100))
+        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 69))
 
     def offDown(self):
         # creates the icon
         image = pygame.image.load('assets/down_arrow_off.png')
         image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 97, self.screen_height - 70))
+        self.screen.blit(image, (self.screen_width - 97, self.screen_height - 73))
 
     def offLeft(self):
         # creates the icon
@@ -37,13 +37,13 @@ class Legend:
         # creates the icon
         image = pygame.image.load('assets/right_arrow_off.png')
         image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 57, self.screen_height - 70))
+        self.screen.blit(image, (self.screen_width - 57, self.screen_height - 71))
 
     def onUp(self):
         # creates the icon
         image = pygame.image.load('assets/up_arrow_on.png')
         image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 100))
+        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 69))
         # pygame.display.flip()
 
     def onDown(self):
@@ -62,11 +62,11 @@ class Legend:
         # creates the icon
         image = pygame.image.load('assets/right_arrow_on.png')
         image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 57, self.screen_height - 70))
+        self.screen.blit(image, (self.screen_width - 57, self.screen_height - 71))
 
     def showLegend(self, screen):
         self.offUp()
-        self.offDown()
+        # self.offDown()
         self.offLeft()
         self.offRight()
 
@@ -76,10 +76,10 @@ class Legend:
         else:
             self.offUp()
 
-        if button[pygame.K_DOWN]:
-            self.onDown()
-        else:
-            self.offDown()
+        # if button[pygame.K_DOWN]:
+        #     self.onDown()
+        # else:
+        #     self.offDown()
 
         if button[pygame.K_LEFT]:
             self.onLeft()
