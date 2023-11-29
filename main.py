@@ -8,6 +8,7 @@ import pygame
 import math
 from math_functions import *
 from ship_class import ship
+from userinterface_class import Legend
 
 def main():
     pygame.init() #Initialize game screen
@@ -30,6 +31,8 @@ def main():
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
     player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh)
+    # Create the UI
+    legend = Legend(screen, screen_width, screen_height)
 
 #Main Gameplay Loop
     running = True #Main execution boolean
@@ -52,6 +55,9 @@ def main():
 
         center = player_ship.get_ship_coords()
         ship_max_dist = player_ship.get_mesh_scaler()
+        # draw the key legend
+        legend.showLegend(screen)
+        legend.keyLightUp(button)
 
     # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
 
