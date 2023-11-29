@@ -9,10 +9,9 @@ import math
 from math_functions import *
 from ship_class import ship
 from userinterface_class import Legend
+from userinterface_class import Menu
 
 def main():
-    pygame.init() #Initialize game screen
-
 #Initilaize Game Variables
     #Screen variables
     screen_width = 800#1200
@@ -39,10 +38,9 @@ def main():
     while running == True:
         button = pygame.key.get_pressed()
         for event in pygame.event.get():
-            pass
-        if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
-            running = False
-            continue
+            if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
+                running = False
+                continue
 
         player_ship.frame(button,screen_width,screen_height)
 
@@ -84,4 +82,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    pygame.init()  # Initialize game screen
+
+    menu = Menu()
+    menu.set_menu()
+    main()    # only temporarily
