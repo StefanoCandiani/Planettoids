@@ -21,12 +21,6 @@ class Legend:
         image = pygame.transform.scale(image, (50,50)) # image size: 745 by 648, 220 x 263 for arrow and 450x350 for box
         self.screen.blit(image, (self.screen_width - 100, self.screen_height - 69))
 
-    def offDown(self):
-        # creates the icon
-        image = pygame.image.load('assets/down_arrow_off.png')
-        image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 97, self.screen_height - 73))
-
     def offLeft(self):
         # creates the icon
         image = pygame.image.load('assets/left_arrow_off.png')
@@ -45,12 +39,6 @@ class Legend:
         image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 100, self.screen_height - 69))
         # pygame.display.flip()
-
-    def onDown(self):
-        # creates the icon
-        image = pygame.image.load('assets/down_arrow_on.png')
-        image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 97, self.screen_height - 70))
 
     def onLeft(self):
         # creates the icon
@@ -75,11 +63,6 @@ class Legend:
             self.onUp()
         else:
             self.offUp()
-
-        # if button[pygame.K_DOWN]:
-        #     self.onDown()
-        # else:
-        #     self.offDown()
 
         if button[pygame.K_LEFT]:
             self.onLeft()
