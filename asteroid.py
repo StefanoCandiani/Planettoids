@@ -14,7 +14,7 @@ class Asteroid():
         self.translate_mesh = [[j for j in i] for i in self.mesh]
         self.mesh_scale = scale
 
-    def get_ast_coords(self):
+    def get_coords(self):
         return (self.center_x, self.center_y)
 
     def get_mesh_scaler(self):
@@ -161,8 +161,8 @@ def main():
         screen.blit(text_surface, text_surface_rect)
         # Draw Asteroid
         for asteroid in asteroid_list:
-            asteroid.draw_asteroid(screen,(128,128,128),(light_source_x, light_source_y),asteroid.get_ast_coords())
-            center = asteroid.get_ast_coords()
+            asteroid.draw_asteroid(screen, (128,128,128), (light_source_x, light_source_y), asteroid.get_coords())
+            center = asteroid.get_coords()
             ship_max_dist = asteroid.get_mesh_scaler()
 
     #Handles all of the soft screen wrapping
