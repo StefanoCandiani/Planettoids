@@ -1,5 +1,5 @@
 import pygame
-from PIL import Image
+# from PIL import Image
 
 # legend = Legend(screen, screen_width, screen_height)
 # legend.keyLightUp(button)
