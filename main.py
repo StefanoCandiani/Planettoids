@@ -33,7 +33,7 @@ def main():
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
     player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh)
-    #Initialize Asteroid List
+    #Initialize asteroid mesh designs
     asteroid_meshes = [
         [
             [(0.0, 1.0), (0.5, 1.0), (0.0, 0.0)],
@@ -86,8 +86,9 @@ def main():
         #     [(1, 0), (0.5, 0.5), (0, 0)],
         # ]
     ]
-    asteroid_list = []
 
+    # Initialize asteroid list with collection of different meshes, random positions, and random velocities
+    asteroid_list = []
     for i in range(len(asteroid_meshes)):
         asteroid_list.append(
             Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),
@@ -106,6 +107,7 @@ def main():
             running = False
             continue
 
+        # Variable change for ship and asteroid
         player_ship.frame(button,screen_width,screen_height)
         for asteroid in asteroid_list:
             asteroid.frame(screen_width, screen_height)
@@ -123,6 +125,7 @@ def main():
         # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
         if center[0] + ship_max_dist > screen_width:
             player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), center[1]))
+
         if center[0] - ship_max_dist < 0:
             player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), center[1]))
         if center[1] + ship_max_dist > screen_height:
