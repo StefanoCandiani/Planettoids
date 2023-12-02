@@ -1,5 +1,5 @@
 import pygame
-# from PIL import Image
+from PIL import Image
 
 # legend = Legend(screen, screen_width, screen_height)
 # legend.keyLightUp(button)
@@ -11,9 +11,12 @@ class Menu:
         self.screen_height = 600
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
-        # image = Image.open('assets\pluto_background.png')     # run one time if image background is not correct size
-        # new_image = image.resize((800, 600))
-        # new_image.save('assets\pluto_background.png')
+        # image = Image.open('assets/down_arrow_off.png')     # run one time if image background is not correct size
+        # new_image = image.resize((50, 50))
+        # new_image.save('assets/down_arrow_off.png')
+        # image = Image.open('assets/down_arrow_on.png')  # run one time if image background is not correct size
+        # new_image = image.resize((50, 50))
+        # new_image.save('assets/down_arrow_on.png')
 
     def set_menu(self):
         pygame.display.set_caption("Planettoids Beta v1.1")
@@ -64,35 +67,22 @@ class Legend:
 
         # image size: 745 by 648, 220 x 263 for arrow and 450x350 for box
         self.offup_image = pygame.image.load('assets/up_arrow_off.png')     # sets up default up arrow key
-        self.offup_image = pygame.transform.scale(self.offup_image, (50, 50))
-
         # self.offdown_image = pygame.image.load('assets/down_arrow_off.png') # sets up down arrow key - removed
-        # self.offdown_image = pygame.transform.scale(self.offdown_image, (50, 50)) # down arrow key is unnecessary
-
         self.offleft_image = pygame.image.load('assets/left_arrow_off.png')     # sets up default left arrow key
-        self.offleft_image = pygame.transform.scale(self.offleft_image, (50, 50))
-
         self.offright_image = pygame.image.load('assets/right_arrow_off.png')     # sets up default right arrow key
-        self.offright_image = pygame.transform.scale(self.offright_image, (50, 50))
-
+        self.offshift_image = pygame.image.load('assets/shift_key_off.png')  # sets up default shift key
         self.onup_image = pygame.image.load('assets/up_arrow_on.png')     # sets up pressed up arrow key
-        self.onup_image = pygame.transform.scale(self.onup_image, (50, 50))
-
         # self.ondown_image = pygame.image.load('assets/down_arrow_on.png')  # sets down pressed up arrow key - removed
-        # self.ondown_image = pygame.transform.scale(self.ondown_image, (50, 50)) # removed because unnecessary
-
         self.onleft_image = pygame.image.load('assets/left_arrow_on.png')     # sets up pressed left arrow key
-        self.onleft_image = pygame.transform.scale(self.onleft_image, (50, 50))
-
         self.onright_image = pygame.image.load('assets/right_arrow_on.png')     # sets up pressed right arrow key
-        self.onright_image = pygame.transform.scale(self.onright_image, (50, 50))
+        self.onshift_image = pygame.image.load('assets/shift_key_on.png')  # sets up pressed shift key
 
 
     def offUp(self, image):        # if the up key is not being pressed then load that png
         # creates the icon
         # image = pygame.image.load('assets/up_arrow_off.png')
         # image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 100))
+        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 105))
 
     # def offDown(self, image):        # if the down key is not being pressed then load that png - removed
     #     # creates the icon
@@ -112,11 +102,17 @@ class Legend:
         # image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 57, self.screen_height - 70))
 
+    def offShift(self, image):        # if the shift key is not being pressed then load that png
+        # creates the icon
+        # image = pygame.image.load('assets/right_arrow_off.png')
+        # image = pygame.transform.scale(image, (50,50))
+        self.screen.blit(image, (self.screen_width - 250, self.screen_height - 64))
+
     def onUp(self, image):        # if the up key is being pressed then load that png
         # creates the icon
         # image = pygame.image.load('assets/up_arrow_on.png')
         # image = pygame.transform.scale(image, (50,50))
-        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 100))
+        self.screen.blit(image, (self.screen_width - 100, self.screen_height - 105))
         # pygame.display.flip()
 
     # def onDown(self, image):        # if the down key is being pressed then load that png - removed
@@ -137,11 +133,18 @@ class Legend:
         # image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 57, self.screen_height - 70))
 
-    def showLegend(self, screen):       # shows the legend by calling the respetive functions
+    def onShift(self, image):        # if the shift key is not being pressed then load that png
+        # creates the icon
+        # image = pygame.image.load('assets/right_arrow_off.png')
+        # image = pygame.transform.scale(image, (50,50))
+        self.screen.blit(image, (self.screen_width - 250, self.screen_height - 64))
+
+    def showLegend(self, screen):       # shows the legend by calling the respective functions
         self.offUp(self.offup_image)
         # self.offDown(self.offdown_image)
         self.offLeft(self.offleft_image)
         self.offRight(self.offright_image)
+        self.offShift(self.offshift_image)
 
     def keyLightUp(self, button):       # if a key is pressed relating to something on the legend, then light it up
         if button[pygame.K_UP]:     # up key
@@ -163,3 +166,8 @@ class Legend:
             self.onRight(self.onright_image)
         else:
             self.offRight(self.offright_image)
+
+        if button[pygame.K_LSHIFT]:      # shift key
+            self.onShift(self.onshift_image)
+        else:
+            self.offShift(self.offshift_image)
