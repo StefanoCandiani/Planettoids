@@ -21,10 +21,15 @@ def main():
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("assets/Planettoids Beta v1.1")
-    bg = pygame.image.load("assets/background1.png") #NOTE: For future implementation we should load these images into sprites to speed up the draw commands
+
+    # NOTE: For future implementation we should load these images into sprites to speed up the draw commands
+    bg1 = pygame.image.load("assets/background1.png")
+    background_list = [bg1]
+
     #Light Source Variables
-    light_source_x = 345 #screen_width // 2
-    light_source_y = 332 #screen_height // 2
+    lightsource_list = [(345,332)] #screen_width // 2 and screen_height // 2
+    level_num = 0
+
     #Title text objects
     font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
     text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
@@ -114,49 +119,49 @@ def main():
 
         #Draw Operations
         #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
-        screen.blit(bg,(0,0,screen_width,screen_height))
+        screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
         screen.blit(text_surface, text_surface_rect)
 
         # Draw Ship
-        player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), player_ship.get_ship_coords())
+        player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], player_ship.get_ship_coords())
         center = player_ship.get_ship_coords()
         ship_max_dist = player_ship.get_mesh_scaler()
 
         # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
         if center[0] + ship_max_dist > screen_width:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), center[1]))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] - screen_width), center[1]))
 
         if center[0] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), center[1]))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] + screen_width), center[1]))
         if center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), (center[0], (center[1] - screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], (center[0], (center[1] - screen_height)))
         if center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), (center[0], (center[1] + screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], (center[0], (center[1] + screen_height)))
 
         # Corner wrapping
         if center[0] + ship_max_dist > screen_width and center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), (center[1] - screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] - screen_width), (center[1] - screen_height)))
         if center[0] - ship_max_dist < 0 and center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), (center[1] - screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] + screen_width), (center[1] - screen_height)))
         if center[0] - ship_max_dist < 0 and center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] + screen_width), (center[1] + screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] + screen_width), (center[1] + screen_height)))
         if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, (0, 0, 0xFF), (light_source_x, light_source_y), ((center[0] - screen_width), (center[1] + screen_height)))
+            player_ship.draw_ship(screen, (0, 0, 0xFF), lightsource_list[level_num], ((center[0] - screen_width), (center[1] + screen_height)))
 
         # Draw asteroid and handle screen wrapping for asteroid
         for asteroid in asteroid_list:
-            asteroid.draw_asteroid(screen, (128,128,128), (light_source_x, light_source_y), asteroid.get_coords())
+            asteroid.draw_asteroid(screen, (128,128,128), lightsource_list[level_num], asteroid.get_coords())
             ast_center = asteroid.get_coords()
             asteroid_max_dist = asteroid.get_mesh_scaler()
 
             if ast_center[0] + asteroid_max_dist > screen_width:
-                asteroid.draw_asteroid(screen, (128, 128, 128), (light_source_x, light_source_y),((ast_center[0] - screen_width), ast_center[1]))
+                asteroid.draw_asteroid(screen, (128, 128, 128), lightsource_list[level_num],((ast_center[0] - screen_width), ast_center[1]))
             if ast_center[0] - asteroid_max_dist < 0:
-                asteroid.draw_asteroid(screen, (128, 128, 128), (light_source_x, light_source_y),((ast_center[0] + screen_width), ast_center[1]))
+                asteroid.draw_asteroid(screen, (128, 128, 128), lightsource_list[level_num],((ast_center[0] + screen_width), ast_center[1]))
             if ast_center[1] + asteroid_max_dist > screen_height:
-                asteroid.draw_asteroid(screen, (128, 128, 128), (light_source_x, light_source_y),(ast_center[0], (ast_center[1] - screen_height)))
+                asteroid.draw_asteroid(screen, (128, 128, 128), lightsource_list[level_num],(ast_center[0], (ast_center[1] - screen_height)))
             if ast_center[1] - asteroid_max_dist < 0:
-                asteroid.draw_asteroid(screen, (128, 128, 128), (light_source_x, light_source_y),(ast_center[0], (ast_center[1] + screen_height)))
+                asteroid.draw_asteroid(screen, (128, 128, 128), lightsource_list[level_num],(ast_center[0], (ast_center[1] + screen_height)))
 
         legend.showLegend(screen)
         legend.keyLightUp(button)
