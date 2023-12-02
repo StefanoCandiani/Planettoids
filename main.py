@@ -9,6 +9,7 @@ import math
 from math_functions import *
 from ship_class import ship
 from userinterface_class import Legend
+from bullet_class import Bullet
 
 def main():
     pygame.init() #Initialize game screen
@@ -33,16 +34,21 @@ def main():
     player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh)
     # Create the UI
     legend = Legend(screen, screen_width, screen_height)
+    # bullet vars
+    bullet_can_spawn = False
+    bullets = []
 
 #Main Gameplay Loop
     running = True #Main execution boolean
     while running == True:
         button = pygame.key.get_pressed()
         for event in pygame.event.get():
-            pass
-        if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
-            running = False
-            continue
+            if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
+                running = False
+                continue
+
+            if button[pygame.K_LSHIFT]:
+                bullet_can_spawn = True
 
         player_ship.frame(button,screen_width,screen_height)
 
@@ -58,6 +64,23 @@ def main():
         # draw the key legend
         legend.showLegend(screen)
         legend.keyLightUp(button)
+
+        if button[pygame.K_LSHIFT] and bullet_can_spawn:
+            if len(bullets) < 10:
+                coords = player_ship.get_ship_coords()
+                angle = player_ship.ship_angle
+                bullets.append(Bullet(screen, coords[0], coords[1], angle))
+            bullet_can_spawn = False
+        # elif not(button[pygame.K_LSHIFT]):
+        #     bullet_can_spawn = True
+
+        for bullet in bullets:
+            if len(bullets) == 0:
+                break
+            # print(bullet, end=', ')
+            bullet.frame(screen_width, screen_height)
+            bullet.draw_bullet()
+        # print(len(bullets))
 
     # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
 
