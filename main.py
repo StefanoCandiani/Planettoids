@@ -15,7 +15,6 @@ from asteroid_class import Asteroid
 from bullet_class import Bullet
 
 def main():
-
 #Initilaize Game Variables
 
     #Screen variables
@@ -122,6 +121,7 @@ def main():
                 running = False
                 continue
 
+
     #Spawn bullets first and foremost
         if button[pygame.K_LSHIFT] and bullet_can_spawn:
             if len(bullets) < 10:
@@ -129,7 +129,7 @@ def main():
                 angle = player_ship.get_ship_angle()
                 bullets.append(Bullet(screen, coords[0], coords[1], angle))
             bullet_can_spawn = False
-        elif not(button[pygame.K_LSHIFT]):
+        elif not (button[pygame.K_LSHIFT]):
             bullet_can_spawn = True
 
     #Update all objects attributes with physics and ect.
@@ -200,4 +200,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    pygame.init()  # Initialize game screen
+
+    menu = Menu()
+    menu.set_menu()
+    main()    # only temporarily
