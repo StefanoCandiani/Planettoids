@@ -26,6 +26,12 @@ class Asteroid():
     def get_asteroid_color(self):
         return self.asteroid_color
 
+    def get_asteroid_velo(self):
+        return (self.vel_x, self.vel_y)
+
+    def get_asteroid_mesh(self):
+        return self.mesh
+
     def set_velocity(self, new_vel_x, new_vel_y):
         # Changes velocity
         self.vel_x = new_vel_x

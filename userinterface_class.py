@@ -85,13 +85,11 @@ class Legend:
         # image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 100, self.screen_height - 105))
 
-
     # def offDown(self, image):        # if the down key is not being pressed then load that png - removed
     #     # creates the icon
     #     # image = pygame.image.load('assets/down_arrow_off.png')
     #     # image = pygame.transform.scale(image, (50,50))
     #     self.screen.blit(image, (self.screen_width - 97, self.screen_height - 70))
-
 
     def offLeft(self, image):        # if the left key is not being pressed then load that png
         # creates the icon
