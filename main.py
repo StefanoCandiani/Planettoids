@@ -37,9 +37,9 @@ def main():
 
     #Title text objects
     font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
-    #text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
-    #text_surface_rect = text_surface.get_rect()
-    #text_surface_rect.center = (screen_width // 2, screen_height // 5)
+    text_surface = font_object_title.render('GAME OVER', True, (255, 255, 255))
+    text_surface_rect = text_surface.get_rect()
+    text_surface_rect.center = (screen_width // 2, screen_height // 5)
 
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
@@ -113,9 +113,12 @@ def main():
 
     #Before we enter the gameplay loop we start the menu screen
     menu.set_menu()
+
+    # Death cond
+    death_flag = False
 #Main Gameplay Loop
     running = True #Main execution boolean
-    while running == True:
+    while running:
         button = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
@@ -123,18 +126,20 @@ def main():
                 continue
 
     #Spawn bullets first and foremost
-        if button[pygame.K_LSHIFT] and bullet_can_spawn:
-            if len(bullets) < 10:
-                coords = player_ship.get_ship_coords()
-                angle = player_ship.get_ship_angle()
-                bullets.append(Bullet(screen, coords[0], coords[1], angle))
-            bullet_can_spawn = False
-        elif not(button[pygame.K_LSHIFT]):
-            bullet_can_spawn = True
+        if not death_flag:
+            if button[pygame.K_LSHIFT] and bullet_can_spawn:
+                if len(bullets) < 10:
+                    coords = player_ship.get_ship_coords()
+                    angle = player_ship.get_ship_angle()
+                    bullets.append(Bullet(screen, coords[0], coords[1], angle))
+                bullet_can_spawn = False
+            elif not(button[pygame.K_LSHIFT]):
+                bullet_can_spawn = True
 
     #Update all objects attributes with physics and ect.
         #Ships first
-        player_ship.frame(button,screen_width,screen_height)
+        if not death_flag:
+            player_ship.frame(button,screen_width,screen_height)
         #Then asteroids
         for asteroid in asteroid_list:
             asteroid.frame(screen_width, screen_height)
@@ -153,6 +158,7 @@ def main():
 
                     # FIXME : add cond for smallest asteroid
                     asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color())]
+                    asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color())]
 
                     bullets = bullets[:i] + bullets[i+1:]
                     asteroid_list = asteroid_list[:j] + asteroid_list[j+1:]
@@ -165,34 +171,43 @@ def main():
                 i_bool = True
 
 
+        if not death_flag:
+            for roid in asteroid_list:
+                if  tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.mesh_scale + roid.get_mesh_scaler():
+                    death_flag = True
+
+
+            pass
+
+
     #Draw Operations
         #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
         screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
-        #screen.blit(text_surface, text_surface_rect)
 
         # Draw Ship
-        player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], player_ship.get_ship_coords())
-        #Pull ship coords for the wrapping code
-        center = player_ship.get_ship_coords()
-        ship_max_dist = player_ship.get_mesh_scaler()
-        # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
-        if center[0] + ship_max_dist > screen_width:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), center[1]))
-        if center[0] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), center[1]))
-        if center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], (center[0], (center[1] - screen_height)))
-        if center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], (center[0], (center[1] + screen_height)))
-        #Corner wrapping
-        if center[0] + ship_max_dist > screen_width and center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] - screen_height)))
-        if center[0] - ship_max_dist < 0 and center[1] + ship_max_dist > screen_height:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), (center[1] - screen_height)))
-        if center[0] - ship_max_dist < 0 and center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), (center[1] + screen_height)))
-        if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
-            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] + screen_height)))
+        if not death_flag:
+            player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], player_ship.get_ship_coords())
+            #Pull ship coords for the wrapping code
+            center = player_ship.get_ship_coords()
+            ship_max_dist = player_ship.get_mesh_scaler()
+            # Handles all the soft screen wrapping - might add a 4 corner solution if the ship is perfectly in a corner
+            if center[0] + ship_max_dist > screen_width:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), center[1]))
+            if center[0] - ship_max_dist < 0:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), center[1]))
+            if center[1] + ship_max_dist > screen_height:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], (center[0], (center[1] - screen_height)))
+            if center[1] - ship_max_dist < 0:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], (center[0], (center[1] + screen_height)))
+            #Corner wrapping
+            if center[0] + ship_max_dist > screen_width and center[1] + ship_max_dist > screen_height:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] - screen_height)))
+            if center[0] - ship_max_dist < 0 and center[1] + ship_max_dist > screen_height:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), (center[1] - screen_height)))
+            if center[0] - ship_max_dist < 0 and center[1] - ship_max_dist < 0:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] + screen_width), (center[1] + screen_height)))
+            if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
+                player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] + screen_height)))
 
         #Draw bullets
         for bullet in bullets:
@@ -221,6 +236,10 @@ def main():
         # draw the key legend (We draw it last so that the UI shows on top of everything else)
         legend.showLegend(screen)
         legend.keyLightUp(button)
+
+        # Draw death message
+        if death_flag:
+            screen.blit(text_surface, text_surface_rect)
 
         pygame.display.flip()
         pygame.time.Clock().tick(100)
