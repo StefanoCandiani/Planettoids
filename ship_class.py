@@ -10,7 +10,7 @@ import math
 from math_functions import *
 
 class ship():
-    def __init__(self,center_x=0,center_y=0,poly_mesh=[[(0,0),(1,0),(0,1)]],poly_scale=20,ship_angle=0):
+    def __init__(self,center_x=0,center_y=0,poly_mesh=[[(0,0),(1,0),(0,1)]],poly_scale=20,ship_angle=0,ship_color=(0xFF,0xFF,0xFF)):
         #Initialize Variables
         self.ship_center_x = center_x
         self.ship_center_y = center_y
@@ -22,6 +22,7 @@ class ship():
         self.ship_velocity = (0,0)
         self.thrust_coefficient = 0.75
         self.friction_coefficient = 0.025
+        self.ship_color = ship_color
         return
 
     def frame(self,button,screen_width,screen_height):
@@ -71,6 +72,12 @@ class ship():
     
     def get_mesh_scaler(self):
         return self.mesh_scale
+    
+    def get_ship_angle(self):
+        return self.ship_angle
+
+    def get_ship_color(self):
+        return self.ship_color
 
     def draw_ship(self,screen,color_tuple,light_source_tuple,location_tuple): #Given the screen, the color of the ship, light source location, and desired screen location, this function draws the ship to the screen with all the necessary light, color, and location calculations.        
         #Move(translate) transform mesh to the ship coordinates and store to translate mesh
