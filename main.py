@@ -24,14 +24,14 @@ def main():
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Planettoids Beta v1.1")
-    
+
     #Set level number
     level_num = 0
 
     #NOTE: For future implementation we should load these images into sprites to speed up the draw commands
     bg1 = pygame.image.load("assets/background1.png")
     background_list = [bg1]
-    
+
     #Light Source Variables
     lightsource_list = [(345,332)] #(screen_width // 2, screen_height // 2)
 
@@ -99,10 +99,10 @@ def main():
         ]
     ]
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
-    
+
     #Initialize the asteroids list with collection of different meshes, random positions, and random velocities
-    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
-    
+    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
+
     #Initialize the bullets list and variables
     bullet_can_spawn = True
     bullets = []
@@ -114,8 +114,9 @@ def main():
     #Before we enter the gameplay loop we start the menu screen
     menu.set_menu()
 
-    # Death cond
+    #Death Cond
     death_flag = False
+
 #Main Gameplay Loop
     running = True #Main execution boolean
     while running:
@@ -138,8 +139,7 @@ def main():
 
     #Update all objects attributes with physics and ect.
         #Ships first
-        if not death_flag:
-            player_ship.frame(button,screen_width,screen_height)
+        player_ship.frame(button,screen_width,screen_height)
         #Then asteroids
         for asteroid in asteroid_list:
             asteroid.frame(screen_width, screen_height)
@@ -158,7 +158,7 @@ def main():
 
                     # FIXME : add cond for smallest asteroid
                     asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color())]
-                    asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color())]
+                    asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color())]
 
                     bullets = bullets[:i] + bullets[i+1:]
                     asteroid_list = asteroid_list[:j] + asteroid_list[j+1:]
@@ -170,17 +170,18 @@ def main():
             else:
                 i_bool = True
 
-        if not death_flag:
-            for roid in asteroid_list:
-                if tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.mesh_scale + roid.get_mesh_scaler():
-                    death_flag = True
+        for roid in asteroid_list:
+            if tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.get_mesh_scaler() + roid.get_mesh_scaler():
+                death_flag = True
 
     #Draw Operations
+
         #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
         screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
+        screen.blit(text_surface, text_surface_rect)
 
-        # Draw Ship
         if not death_flag:
+            # Draw Ship
             player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], player_ship.get_ship_coords())
             #Pull ship coords for the wrapping code
             center = player_ship.get_ship_coords()
@@ -231,8 +232,6 @@ def main():
         # draw the key legend (We draw it last so that the UI shows on top of everything else)
         legend.showLegend(screen)
         legend.keyLightUp(button)
-
-        # Draw death message
         if death_flag:
             screen.blit(text_surface, text_surface_rect)
 
@@ -242,3 +241,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
