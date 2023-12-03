@@ -101,7 +101,7 @@ def main():
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
     
     #Initialize the asteroids list with collection of different meshes, random positions, and random velocities
-    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color = asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
+    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
     
     #Initialize the bullets list and variables
     bullet_can_spawn = True
@@ -133,7 +133,7 @@ def main():
                     angle = player_ship.get_ship_angle()
                     bullets.append(Bullet(screen, coords[0], coords[1], angle))
                 bullet_can_spawn = False
-            elif not(button[pygame.K_LSHIFT]):
+            elif not (button[pygame.K_LSHIFT]):
                 bullet_can_spawn = True
 
     #Update all objects attributes with physics and ect.
@@ -170,15 +170,10 @@ def main():
             else:
                 i_bool = True
 
-
         if not death_flag:
             for roid in asteroid_list:
-                if  tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.mesh_scale + roid.get_mesh_scaler():
+                if tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.mesh_scale + roid.get_mesh_scaler():
                     death_flag = True
-
-
-            pass
-
 
     #Draw Operations
         #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
