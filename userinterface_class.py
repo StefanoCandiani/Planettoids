@@ -1,9 +1,11 @@
+"""
+Created By: Phoenix Cushman, Stefano Candiani, Joel Kubinsky, Danush Singla
+Date: 11/3/2023 - XX/XX/2023
+Project: Project 4: Group Game, "Planettoids"
+File: userinterface_class
+"""
 import pygame
-from PIL import Image
-
-# legend = Legend(screen, screen_width, screen_height)
-# legend.keyLightUp(button)
-# hello
+#from PIL import Image #Not needed for normal execution
 
 class Menu:
     def __init__(self):
@@ -19,7 +21,6 @@ class Menu:
         # new_image.save('assets/down_arrow_on.png')
 
     def set_menu(self):
-        pygame.display.set_caption("Planettoids Beta v1.1")
         bg = pygame.image.load("assets/pluto_background.png")
 
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)        # title
@@ -84,11 +85,13 @@ class Legend:
         # image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 100, self.screen_height - 105))
 
+
     # def offDown(self, image):        # if the down key is not being pressed then load that png - removed
     #     # creates the icon
     #     # image = pygame.image.load('assets/down_arrow_off.png')
     #     # image = pygame.transform.scale(image, (50,50))
     #     self.screen.blit(image, (self.screen_width - 97, self.screen_height - 70))
+
 
     def offLeft(self, image):        # if the left key is not being pressed then load that png
         # creates the icon
