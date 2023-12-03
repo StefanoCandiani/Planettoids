@@ -1,3 +1,9 @@
+"""
+Created By: Phoenix Cushman, Stefano Candiani, Joel Kubinsky, Danush Singla
+Date: 11/3/2023 - XX/XX/2023
+Project: Project 4: Group Game, "Planettoids"
+File: bullet_class
+"""
 import pygame
 import math
 from math_functions import *
@@ -36,7 +42,6 @@ class Bullet():
 
     def draw_bullet(self):
         pygame.draw.circle(self.screen, 'white', (self.x_coord, self.y_coord), self.radius)
-
 
     def get_rad(self):
         return self.radius
