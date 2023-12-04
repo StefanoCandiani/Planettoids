@@ -5,28 +5,50 @@ Project: Project 4: Group Game, "Planettoids"
 File: userinterface_class
 """
 import pygame
+import time
 # from PIL import Image # Not needed for normal execution
 
 # legend = Legend(screen, screen_width, screen_height)
 # legend.keyLightUp(button)
-# hello
 
-class GameOver:
+# prints the level
+class Level:
     def __init__(self, screen_width, screen_height, screen):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = screen
-    def game_over_menu(self):
+
+    # screen that displays the level
+    def level_menu(self, level_number):
+        # Level number
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 50)
+        text_surface = font_object_title.render(f'Level {level_number}', True, (255, 176, 20))
+        text_surface_rect = text_surface.get_rect()
+        text_surface_rect.center = (self.screen_width // 2, self.screen_height // 2)
+        self.screen.blit(text_surface, text_surface_rect)
+        pygame.display.flip()
+
+        time.sleep(2)
+
+# if the player wins the game
+class PlayerWon:
+    def __init__(self, screen_width, screen_height, screen):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.screen = screen
+
+    # You win screen
+    def player_won_menu(self):
         # Game Over
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
-        text_surface = font_object_title.render('GAME OVER', True, (255, 255, 255))
+        text_surface = font_object_title.render('YOU WIN!', True, (0, 255, 0))
         text_surface_rect = text_surface.get_rect()
         text_surface_rect.center = (self.screen_width // 2, self.screen_height // 5)
         self.screen.blit(text_surface, text_surface_rect)
 
         # Start Game Again
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 30)  # menu text to start game
-        text_start = font_object_title.render('Press Enter to Start Game', True, (255, 255, 255))
+        text_start = font_object_title.render('Press Enter to Play Again', True, (255, 255, 255))
         text_start_rect = text_start.get_rect()
         text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
         self.screen.blit(text_start, text_start_rect)
@@ -38,7 +60,37 @@ class GameOver:
         text_end_rect.center = (self.screen_width - 368, self.screen_height - 50)
         self.screen.blit(text_end, text_end_rect)
 
+# if the game ends when the player hits an asteroid
+class GameOver:
+    def __init__(self, screen_width, screen_height, screen):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.screen = screen
 
+    # Game Over screen
+    def game_over_menu(self):
+        # Game Over
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
+        text_surface = font_object_title.render('GAME OVER', True, (255, 0, 0))
+        text_surface_rect = text_surface.get_rect()
+        text_surface_rect.center = (self.screen_width // 2, self.screen_height // 5)
+        self.screen.blit(text_surface, text_surface_rect)
+
+        # Start Game Again
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 30)  # menu text to start game
+        text_start = font_object_title.render('Press Enter to Play Again', True, (255, 255, 255))
+        text_start_rect = text_start.get_rect()
+        text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
+        self.screen.blit(text_start, text_start_rect)
+
+        # Or quit by pressing escape
+        font_object_title_end = pygame.font.Font('assets/AmazDooMLeft.ttf', 20)  # menu text to start game
+        text_end = font_object_title_end.render('Press Escape to Quit Game', True, (255, 255, 255))
+        text_end_rect = text_start.get_rect()
+        text_end_rect.center = (self.screen_width - 368, self.screen_height - 50)
+        self.screen.blit(text_end, text_end_rect)
+
+# Initial menu that is printed first
 class Menu:
     def __init__(self):
         self.screen_width = 800
@@ -52,24 +104,29 @@ class Menu:
         # new_image = image.resize((50, 50))
         # new_image.save('assets/down_arrow_on.png')
 
+    # Sets all of the text for the menu
     def set_menu(self):
         bg = pygame.image.load("assets/pluto_background.png")
 
+        # Title
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)        # title
         text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
         text_surface_rect = text_surface.get_rect()
         text_surface_rect.center = (self.screen_width // 2, self.screen_height // 5 - 50)
 
+        # Text to press enter
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 30)         # menu text to start game
         text_start = font_object_title.render('Press Enter to Start Game', True, (255, 255, 255))
         text_start_rect = text_start.get_rect()
         text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
 
+        # Copyright text
         font_object_title = pygame.font.Font('assets/arial.ttf', 10)    # copyright text on menu
         text_copyright = font_object_title.render('Copyright© 2023. Phoenix Cushman, Joel Kubinsky, Stefano Candiani, Danush Singla. All rights reserved.', True, (255, 255, 255))
         text_copyright_rect = text_copyright.get_rect()
         text_copyright_rect.center = (self.screen_width // 2, self.screen_height - 10)
 
+        # while loop that displays the menu continuously until enter is pressed to start the game
         running = True  # Main execution boolean
         while running == True:
             button = pygame.key.get_pressed()
@@ -86,6 +143,7 @@ class Menu:
 
             pygame.display.flip()
 
+# part where the keys light up
 class Legend:
     screen = None           # screen properties
     screen_width = None

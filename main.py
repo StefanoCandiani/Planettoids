@@ -12,6 +12,8 @@ from ship_class import ship
 from userinterface_class import Legend
 from userinterface_class import Menu
 from userinterface_class import GameOver
+from userinterface_class import PlayerWon
+from userinterface_class import Level
 from asteroid_class import Asteroid
 from bullet_class import Bullet
 
@@ -46,6 +48,8 @@ def main():
 
         #Initialize Game Over Screen
         game_over = GameOver(screen_width, screen_height, screen)
+        player_won = PlayerWon(screen_width, screen_height, screen)
+        level_menu = Level(screen_width, screen_height, screen)
 
         #Initialize asteroid mesh designs #and colors
         asteroid_meshes = [
@@ -124,7 +128,10 @@ def main():
         #Death Cond
         death_flag = False
 
-    #Main Gameplay Loop
+        #Prints the level of the game
+        level_menu.level_menu(level_num+1)
+
+        #Main Gameplay Loop
         running = True #Main execution boolean
         while running:
             button = pygame.key.get_pressed()
@@ -241,11 +248,19 @@ def main():
             legend.showLegend(screen)
             legend.keyLightUp(button)
 
+            # if the player destroys all of the asteroids then they win
+            if len(asteroid_list) == 0:
+                player_won.player_won_menu()
+                if button[pygame.K_RETURN]:  # check if Enter is pressed
+                    running = False
+                    continue
+
             if death_flag:
                 game_over.game_over_menu()
                 if button[pygame.K_RETURN]:  # check if Enter is pressed
                     running = False
                     continue
+
             pygame.display.flip()
             pygame.time.Clock().tick(100)
 
