@@ -5,11 +5,7 @@ Project: Project 4: Group Game, "Planettoids"
 File: userinterface_class
 """
 import pygame
-from PIL import Image # Not needed for normal execution
-
-# legend = Legend(screen, screen_width, screen_height)
-# legend.keyLightUp(button)
-# hello
+#from PIL import Image #Not needed for normal execution
 
 class Menu:
     def __init__(self):
@@ -89,13 +85,11 @@ class Legend:
         # image = pygame.transform.scale(image, (50,50))
         self.screen.blit(image, (self.screen_width - 100, self.screen_height - 105))
 
-
     # def offDown(self, image):        # if the down key is not being pressed then load that png - removed
     #     # creates the icon
     #     # image = pygame.image.load('assets/down_arrow_off.png')
     #     # image = pygame.transform.scale(image, (50,50))
     #     self.screen.blit(image, (self.screen_width - 97, self.screen_height - 70))
-
 
     def offLeft(self, image):        # if the left key is not being pressed then load that png
         # creates the icon
