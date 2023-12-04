@@ -143,7 +143,7 @@ def main():
                     print("Thank you for playing!")
                     quit()
 
-        #Spawn bullets first and foremost
+            #Spawn bullets first and foremost
             if not death_flag:
                 if button[pygame.K_LSHIFT] and bullet_can_spawn:
                     if len(bullets) < 10:
@@ -154,14 +154,14 @@ def main():
                 elif not (button[pygame.K_LSHIFT]):
                     bullet_can_spawn = True
 
-        #Update all objects attributes with physics and ect.
+            #Update all objects attributes with physics and ect.
             #Ships first
             player_ship.frame(button,screen_width,screen_height)
             #Then asteroids
             for asteroid in asteroid_list:
                 asteroid.frame(screen_width, screen_height)
 
-        # Collision Detection
+            # Collision Detection
             i = 0
             i_bool = True
             while i < len(bullets):
@@ -191,7 +191,7 @@ def main():
                 if tuple_mag(tuple_adder([player_ship.get_ship_coords(), tuple_scaler(roid.get_coords(), -1)])) <= player_ship.get_mesh_scaler() + roid.get_mesh_scaler():
                     death_flag = True
 
-        #Draw Operations
+            #Draw Operations
 
             #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
             screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
@@ -258,6 +258,7 @@ def main():
                 if button[pygame.K_RETURN]:  # check if Enter is pressed
                     # level_num += 1
                     running = False
+                    print("Enter is pressed")
                     continue
 
             if death_flag:
