@@ -15,7 +15,6 @@ from asteroid_class import Asteroid
 from bullet_class import Bullet
 
 def main():
-
 #Initilaize Game Variables
 
     #Screen variables
@@ -37,9 +36,9 @@ def main():
 
     #Title text objects
     font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
-    text_surface = font_object_title.render('GAME OVER', True, (255, 255, 255))
-    text_surface_rect = text_surface.get_rect()
-    text_surface_rect.center = (screen_width // 2, screen_height // 5)
+    #text_surface = font_object_title.render('PLANETTOIDS', True, (255, 255, 255))
+    #text_surface_rect = text_surface.get_rect()
+    #text_surface_rect.center = (screen_width // 2, screen_height // 5)
 
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
@@ -101,7 +100,7 @@ def main():
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
 
     #Initialize the asteroids list with collection of different meshes, random positions, and random velocities
-    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
+    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color = asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
 
     #Initialize the bullets list and variables
     bullet_can_spawn = True
@@ -109,33 +108,29 @@ def main():
 
     #Create the UI
     legend = Legend(screen, screen_width, screen_height)
-    menu = Menu()
-
-    #Before we enter the gameplay loop we start the menu screen
-    menu.set_menu()
-
+    
     #Death Cond
     death_flag = False
 
 #Main Gameplay Loop
     running = True #Main execution boolean
-    while running:
+    while running == True:
         button = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
                 running = False
                 continue
 
+
     #Spawn bullets first and foremost
-        if not death_flag:
-            if button[pygame.K_LSHIFT] and bullet_can_spawn:
-                if len(bullets) < 10:
-                    coords = player_ship.get_ship_coords()
-                    angle = player_ship.get_ship_angle()
-                    bullets.append(Bullet(screen, coords[0], coords[1], angle))
-                bullet_can_spawn = False
-            elif not (button[pygame.K_LSHIFT]):
-                bullet_can_spawn = True
+        if button[pygame.K_LSHIFT] and bullet_can_spawn:
+            if len(bullets) < 10:
+                coords = player_ship.get_ship_coords()
+                angle = player_ship.get_ship_angle()
+                bullets.append(Bullet(screen, coords[0], coords[1], angle))
+            bullet_can_spawn = False
+        elif not (button[pygame.K_LSHIFT]):
+            bullet_can_spawn = True
 
     #Update all objects attributes with physics and ect.
         #Ships first
@@ -143,7 +138,7 @@ def main():
         #Then asteroids
         for asteroid in asteroid_list:
             asteroid.frame(screen_width, screen_height)
-
+            
     # Collision Detection
         i = 0
         i_bool = True
@@ -205,6 +200,7 @@ def main():
             if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
                 player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] + screen_height)))
 
+
         #Draw bullets
         for bullet in bullets:
             if len(bullets) == 0:
@@ -235,10 +231,12 @@ def main():
         if death_flag:
             screen.blit(text_surface, text_surface_rect)
 
+
         pygame.display.flip()
-        pygame.time.Clock().tick(100)
 
 
 if __name__ == '__main__':
-    main()
-    
+    menu = Menu()
+    menu.set_menu()
+    main()    # only temporarily
+
