@@ -18,7 +18,7 @@ from asteroid_class import Asteroid
 from bullet_class import Bullet
 
 def main():
-    pygame.init()
+    pygame.init() #Initialize game screen
     menu = Menu()
     menu.set_menu()
 
@@ -30,7 +30,6 @@ def main():
         #Initilaize Game Variables
 
         #Screen variables
-        # pygame.init() #Initialize game screen
         screen_width = 800#1200
         screen_height = 600
         screen = pygame.display.set_mode((screen_width, screen_height))
@@ -47,7 +46,7 @@ def main():
         ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
         player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh,ship_color=(0xFF,0xFF,0xFF))
 
-        #Initialize Game Over Screen
+        #Initialize Screens/Menus
         game_over = GameOver(screen_width, screen_height, screen)
         player_won = PlayerWon(screen_width, screen_height, screen)
         level_menu = Level(screen_width, screen_height, screen)
@@ -173,9 +172,20 @@ def main():
 
                     if tuple_mag(tuple_adder([bullets[i].get_coords(), tuple_scaler(asteroid_list[j].get_coords(), -1)])) <= bullets[i].radius + asteroid_list[j].get_mesh_scaler():
 
-                        # FIXME : add cond for smallest asteroid
-                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color())]
-                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color())]
+                        if asteroid_list[j].get_asteroid_size() > 0:
+                            asteroid_list += [
+                                Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1],
+                                         (asteroid_list[j].get_asteroid_velo()[0] * -1),
+                                         asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(),
+                                         asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color(),
+                                         asteroid_list[j].get_asteroid_size() - 1)]
+                            asteroid_list += [
+                                Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1],
+                                         asteroid_list[j].get_asteroid_velo()[0],
+                                         (asteroid_list[j].get_asteroid_velo()[1] * -1),
+                                         asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2,
+                                         asteroid_list[j].get_asteroid_color(),
+                                         asteroid_list[j].get_asteroid_size() - 1)]
 
                         bullets = bullets[:i] + bullets[i+1:]
                         asteroid_list = asteroid_list[:j] + asteroid_list[j+1:]
@@ -192,7 +202,6 @@ def main():
                     death_flag = True
 
             #Draw Operations
-
             #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
             screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
 
@@ -258,7 +267,6 @@ def main():
                 if button[pygame.K_RETURN]:  # check if Enter is pressed
                     # level_num += 1
                     running = False
-                    print("Enter is pressed")
                     continue
 
             if death_flag:
