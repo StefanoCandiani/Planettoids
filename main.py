@@ -56,7 +56,8 @@ def main():
             [(0.0, -1.0), (-0.4, -1.0), (0.0, 0.0)],
             [(-0.4, -1.0), (-0.5, -0.2), (0.0, 0.0)],
             [(-0.5, -0.2), (-0.3, 0.0), (0.0, 0.0)],
-            [(-0.3, 0.0), (0.0, 1.0), (0.0, 0.0)]
+            [(-0.3, 0.0), (0.0, 1.0), (0.0, 0.0)],
+            2
         ],
         [
             [(-0.1, 0.8), (0.4, 1.0), (0.0, 0.0)],
@@ -71,7 +72,8 @@ def main():
             [(-0.85, -0.5), (-0.7, 0.1), (0.0, 0.0)],
             [(-0.7, 0.1), (-1.0, 0.5), (0.0, 0.0)],
             [(-1.0, 0.5), (-0.5, 1.0), (0.0, 0.0)],
-            [(-0.5, 1.0), (-0.1, 0.8), (0.0, 0.0)]
+            [(-0.5, 1.0), (-0.1, 0.8), (0.0, 0.0)],
+            2
         ],
         [
             [(0.0, 1.0), (0.65, 0.65), (0.05, 0.5)],
@@ -84,7 +86,8 @@ def main():
             [(-0.65, -0.45), (-0.4, -0.15), (0.0, 0.0)],
             [(-0.4, -0.15), (-1.0, 0.0), (-0.3, 0.6)],
             [(-0.4, -0.15), (-0.3, 0.6), (0.0, 0.0)],
-            [(-0.3, 0.6), (0.05, 0.5), (0.0, 0.0)]
+            [(-0.3, 0.6), (0.05, 0.5), (0.0, 0.0)],
+            2
         ],
         #Alien Mesh to implement
         [
@@ -96,6 +99,7 @@ def main():
             [(0.4, -0.6), (0.5, -0.25), (0, 0)],
             [(0.5, -0.25), (1, 0), (0, 0)],
             [(1, 0), (0.5, 0.5), (0, 0)],
+            3
         ]
     ]
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
@@ -109,7 +113,7 @@ def main():
 
     for i in range(len(asteroid_meshes)): #NOTE:Asteroid list initialization code optimized with list comprehension
         choice = random.choice([top_spawn, bottom_spawn, left_spawn, right_spawn])
-        asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i])]
+        asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i][:-1], asteroid_color=asteroid_colors[i], size=asteroid_meshes[i][-1])]
 
     #Initialize the bullets list and variables
     bullet_can_spawn = True
@@ -164,9 +168,9 @@ def main():
 
                 if tuple_mag(tuple_adder([bullets[i].get_coords(), tuple_scaler(asteroid_list[j].get_coords(), -1)])) <= bullets[i].radius + asteroid_list[j].get_mesh_scaler():
 
-                    # FIXME : add cond for smallest asteroid
-                    asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color())]
-                    asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color())]
+                    if asteroid_list[j].get_asteroid_size() > 0:
+                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
+                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
 
                     bullets = bullets[:i] + bullets[i+1:]
                     asteroid_list = asteroid_list[:j] + asteroid_list[j+1:]
@@ -183,7 +187,6 @@ def main():
                 death_flag = True
 
     #Draw Operations
-
         #screen.fill((0, 0, 0)) #Prolly should have this turned off cause the background image kinda already refreshes the screen
         screen.blit(background_list[level_num],(0,0,screen_width,screen_height))
 

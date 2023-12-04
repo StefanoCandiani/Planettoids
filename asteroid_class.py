@@ -3,7 +3,7 @@ from math_functions import *
 
 class Asteroid():
 
-    def __init__(self, center_x=0, center_y=0, v_x=0.75, v_y=1.0, mesh=[[(0,0),(1,0),(0,1)]], scale=50, asteroid_color=(128, 128, 128)):
+    def __init__(self, center_x=0, center_y=0, v_x=0.75, v_y=1.0, mesh=[[(0,0),(1,0),(0,1)]], scale=50, asteroid_color=(128, 128, 128), size=2):
         # Variable Initializer
         self.center_x = center_x
         self.center_y = center_y
@@ -14,6 +14,11 @@ class Asteroid():
         self.translate_mesh = [[j for j in i] for i in self.mesh]
         self.mesh_scale = scale
         self.asteroid_color = asteroid_color
+        if size == 3:
+            self.asteroid_size = 0
+            self.mesh_scale = 30
+        else:
+            self.asteroid_size = size
 
     def get_coords(self):
         # Returns location tuple of asteroid
@@ -31,6 +36,9 @@ class Asteroid():
 
     def get_asteroid_mesh(self):
         return self.mesh
+
+    def get_asteroid_size(self):
+        return self.asteroid_size
 
     def set_velocity(self, new_vel_x, new_vel_y):
         # Changes velocity
