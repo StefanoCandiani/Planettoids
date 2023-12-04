@@ -1,11 +1,9 @@
 import pygame
 from math_functions import *
 
-
 class Asteroid():
 
-    def __init__(self, center_x=0, center_y=0, v_x=0.75, v_y=1.0, mesh=[[(0, 0), (1, 0), (0, 1)]], scale=50,
-                 asteroid_color=(128, 128, 128)):
+    def __init__(self, center_x=0, center_y=0, v_x=0.75, v_y=1.0, mesh=[[(0,0),(1,0),(0,1)]], scale=50, asteroid_color=(128, 128, 128)):
         # Variable Initializer
         self.center_x = center_x
         self.center_y = center_y
@@ -24,7 +22,7 @@ class Asteroid():
     def get_mesh_scaler(self):
         # Returns mesh scaler of asteroid
         return self.mesh_scale
-
+    
     def get_asteroid_color(self):
         return self.asteroid_color
 
@@ -39,7 +37,7 @@ class Asteroid():
         self.vel_x = new_vel_x
         self.vel_y = new_vel_y
 
-    def set_asteroid_mesh(self, new_mesh):
+    def set_asteroid_mesh(self,new_mesh):
         # Changes asteroid mesh
         self.mesh = new_mesh
         self.transform_mesh = [[j for j in i] for i in self.mesh]
@@ -75,7 +73,5 @@ class Asteroid():
                      location_tuple])
 
         # Display individual polygons based on location tuple, light source, etc.
-        for single_polygon_index in range(0, len(self.translate_mesh)):
-            pygame.draw.polygon(screen, tuple_scaler(color_tuple, light_multiplier_calculator(
-                tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3), location_tuple,
-                light_source_tuple)), self.translate_mesh[single_polygon_index])
+        for single_polygon_index in range(0,len(self.translate_mesh)):
+            pygame.draw.polygon(screen,tuple_scaler(color_tuple,light_multiplier_calculator(tuple_scaler(tuple_adder(self.transform_mesh[single_polygon_index]), 1 / 3),location_tuple,light_source_tuple)),self.translate_mesh[single_polygon_index])

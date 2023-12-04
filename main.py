@@ -16,6 +16,7 @@ from asteroid_class import Asteroid
 from bullet_class import Bullet
 
 def main():
+
 #Initilaize Game Variables
 
     #Screen variables
@@ -34,7 +35,6 @@ def main():
 
     #Light Source Variables
     lightsource_list = [(345,332)] #(screen_width // 2, screen_height // 2)
-
 
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
@@ -99,8 +99,15 @@ def main():
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
 
     #Initialize the asteroids list with collection of different meshes, random positions, and random velocities
+    asteroid_list = []
+    top_spawn = (random.randint(0, screen_width), 0)
+    bottom_spawn = (random.randint(0, screen_width), screen_height)
+    left_spawn = (0, random.randint(0, screen_height))
+    right_spawn = (screen_width, random.randint(0, screen_height))
 
-    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color = asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
+    for i in range(len(asteroid_meshes)): #NOTE:Asteroid list initialization code optimized with list comprehension
+        choice = random.choice([top_spawn, bottom_spawn, left_spawn, right_spawn])
+        asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i])]
 
 
     #Initialize the bullets list and variables
@@ -115,7 +122,7 @@ def main():
 
 #Main Gameplay Loop
     running = True #Main execution boolean
-    while running == True:
+    while running:
         button = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT or button[pygame.K_ESCAPE]:
@@ -200,7 +207,6 @@ def main():
             if center[0] + ship_max_dist > screen_width and center[1] - ship_max_dist < 0:
                 player_ship.draw_ship(screen, player_ship.get_ship_color(), lightsource_list[level_num], ((center[0] - screen_width), (center[1] + screen_height)))
 
-
         #Draw bullets
         for bullet in bullets:
             if len(bullets) == 0:
@@ -235,7 +241,6 @@ def main():
                 print("Enter is Pressed")
                 death_flag = False
                 continue
-
         pygame.display.flip()
         pygame.time.Clock().tick(100)
 
@@ -245,4 +250,3 @@ if __name__ == '__main__':
     menu = Menu()
     menu.set_menu()
     main()    # only temporarily
-
