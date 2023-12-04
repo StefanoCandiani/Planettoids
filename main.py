@@ -101,7 +101,15 @@ def main():
     asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
 
     #Initialize the asteroids list with collection of different meshes, random positions, and random velocities
-    asteroid_list = [Asteroid(random.randint(0, screen_width), random.randint(0, screen_height), random.random(),random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i]) for i in range(len(asteroid_meshes))] #NOTE:Asteroid list initialization code optimized with list comprehension
+    asteroid_list = []
+    top_spawn = (random.randint(0, screen_width), 0)
+    bottom_spawn = (random.randint(0, screen_width), screen_height)
+    left_spawn = (0, random.randint(0, screen_height))
+    right_spawn = (screen_width, random.randint(0, screen_height))
+
+    for i in range(len(asteroid_meshes)): #NOTE:Asteroid list initialization code optimized with list comprehension
+        choice = random.choice([top_spawn, bottom_spawn, left_spawn, right_spawn])
+        asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i])]
 
     #Initialize the bullets list and variables
     bullet_can_spawn = True
