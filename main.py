@@ -11,6 +11,7 @@ from math_functions import *
 from ship_class import ship
 from userinterface_class import Legend
 from userinterface_class import Menu
+from userinterface_class import GameOver
 from asteroid_class import Asteroid
 from bullet_class import Bullet
 
@@ -18,7 +19,7 @@ def main():
 #Initilaize Game Variables
 
     #Screen variables
-    pygame.init() #Initialize game screen
+    # pygame.init() #Initialize game screen
     screen_width = 800#1200
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -34,16 +35,13 @@ def main():
     #Light Source Variables
     lightsource_list = [(345,332)] #(screen_width // 2, screen_height // 2)
 
-    #Title text objects
-    font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
-    text_surface = font_object_title.render('GAME OVER', True, (255, 255, 255))
-    text_surface_rect = text_surface.get_rect()
-    text_surface_rect.center = (screen_width // 2, screen_height // 5)
-
 
     #Initialize Player Ship
     ship_mesh = [[(-0.5,0),(-math.sqrt(2)/2,math.sqrt(2)/2),(1,0)],[(-0.5,0),(-math.sqrt(2)/2,-math.sqrt(2)/2),(1,0)]]
     player_ship = ship(screen_width // 2,screen_height // 2,ship_mesh,ship_color=(0xFF,0xFF,0xFF))
+
+    #Initialize Game Over Screen
+    game_over = GameOver(screen_width, screen_height, screen)
 
     #Initialize asteroid mesh designs #and colors
     asteroid_meshes = [
@@ -111,10 +109,6 @@ def main():
 
     #Create the UI
     legend = Legend(screen, screen_width, screen_height)
-    menu = Menu()
-
-    #Before we enter the gameplay loop we start the menu screen
-    menu.set_menu()
 
     #Death Cond
     death_flag = False
@@ -234,8 +228,13 @@ def main():
         # draw the key legend (We draw it last so that the UI shows on top of everything else)
         legend.showLegend(screen)
         legend.keyLightUp(button)
+
         if death_flag:
-            screen.blit(text_surface, text_surface_rect)
+            game_over.game_over_menu()
+            if button[pygame.K_RETURN]:  # check if Enter is pressed
+                print("Enter is Pressed")
+                death_flag = False
+                continue
 
         pygame.display.flip()
         pygame.time.Clock().tick(100)

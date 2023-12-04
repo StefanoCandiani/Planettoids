@@ -11,6 +11,27 @@ import pygame
 # legend.keyLightUp(button)
 # hello
 
+class GameOver:
+    def __init__(self, screen_width, screen_height, screen):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.screen = screen
+    def game_over_menu(self):
+        # Game Over
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
+        text_surface = font_object_title.render('GAME OVER', True, (255, 255, 255))
+        text_surface_rect = text_surface.get_rect()
+        text_surface_rect.center = (self.screen_width // 2, self.screen_height // 5)
+        self.screen.blit(text_surface, text_surface_rect)
+
+        # Start Game Again
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 30)  # menu text to start game
+        text_start = font_object_title.render('Press Enter to Start Game', True, (255, 255, 255))
+        text_start_rect = text_start.get_rect()
+        text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
+        self.screen.blit(text_start, text_start_rect)
+
+
 class Menu:
     def __init__(self):
         self.screen_width = 800
