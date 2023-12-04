@@ -22,6 +22,10 @@ def main():
     menu = Menu()
     menu.set_menu()
 
+    # Set level number
+    level_num = 0
+    max_level = 10-1        # minus one because level number is indexed from 0 but we still have total 10 levels
+
     while True:
         #Initilaize Game Variables
 
@@ -31,9 +35,6 @@ def main():
         screen_height = 600
         screen = pygame.display.set_mode((screen_width, screen_height))
         pygame.display.set_caption("Planettoids Beta v1.1")
-
-        #Set level number
-        level_num = 0
 
         #NOTE: For future implementation we should load these images into sprites to speed up the draw commands
         bg1 = pygame.image.load("assets/background1.png")
@@ -250,8 +251,12 @@ def main():
 
             # if the player destroys all of the asteroids then they win
             if len(asteroid_list) == 0:
-                player_won.player_won_menu()
+                if level_num > max_level:       # check if the level is the last one then print win screen
+                    player_won.player_won_menu()
+
+                level_menu.level_increment(level_num+1)     # otherwise continue to next level if enter is pressed
                 if button[pygame.K_RETURN]:  # check if Enter is pressed
+                    # level_num += 1
                     running = False
                     continue
 

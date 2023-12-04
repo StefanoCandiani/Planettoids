@@ -22,13 +22,37 @@ class Level:
     def level_menu(self, level_number):
         # Level number
         font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 50)
-        text_surface = font_object_title.render(f'Level {level_number}', True, (255, 176, 20))
-        text_surface_rect = text_surface.get_rect()
-        text_surface_rect.center = (self.screen_width // 2, self.screen_height // 2)
-        self.screen.blit(text_surface, text_surface_rect)
-        pygame.display.flip()
+        for i in range(60):
+            text_surface = font_object_title.render(f'Level {level_number}', True, (255*i/60, 176*i/60, 20*i/60))
+            text_surface_rect = text_surface.get_rect()
+            text_surface_rect.center = (self.screen_width // 2, self.screen_height // 2)
+            self.screen.blit(text_surface, text_surface_rect)
+            pygame.display.flip()
 
-        time.sleep(2)
+            time.sleep(2/60)
+
+    # Level complete screen
+    def level_increment(self, level_num):
+        # Game Over
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 100)
+        text_surface = font_object_title.render(f'Level {level_num} Complete!', True, (0, 255, 0))
+        text_surface_rect = text_surface.get_rect()
+        text_surface_rect.center = (self.screen_width // 2, self.screen_height // 5)
+        self.screen.blit(text_surface, text_surface_rect)
+
+        # Move on to next level
+        font_object_title = pygame.font.Font('assets/AmazDooMLeft.ttf', 30)  # menu text to start game
+        text_start = font_object_title.render('Press Enter to Play Next Level', True, (255, 255, 255))
+        text_start_rect = text_start.get_rect()
+        text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
+        self.screen.blit(text_start, text_start_rect)
+
+        # # Or quit by pressing escape
+        # font_object_title_end = pygame.font.Font('assets/AmazDooMLeft.ttf', 20)  # menu text to start game
+        # text_end = font_object_title_end.render('Press Escape to Quit Game', True, (255, 255, 255))
+        # text_end_rect = text_start.get_rect()
+        # text_end_rect.center = (self.screen_width - 350, self.screen_height - 50)
+        # self.screen.blit(text_end, text_end_rect)
 
 # if the player wins the game
 class PlayerWon:
