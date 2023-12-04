@@ -31,6 +31,13 @@ class GameOver:
         text_start_rect.center = (self.screen_width // 2, self.screen_height - 100)
         self.screen.blit(text_start, text_start_rect)
 
+        # Or quit by pressing escape
+        font_object_title_end = pygame.font.Font('assets/AmazDooMLeft.ttf', 20)  # menu text to start game
+        text_end = font_object_title_end.render('Press Escape to Quit Game', True, (255, 255, 255))
+        text_end_rect = text_start.get_rect()
+        text_end_rect.center = (self.screen_width - 368, self.screen_height - 50)
+        self.screen.blit(text_end, text_end_rect)
+
 
 class Menu:
     def __init__(self):
