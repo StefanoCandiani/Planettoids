@@ -5,7 +5,7 @@ Project: Project 4: Group Game, "Planettoids"
 File: userinterface_class
 """
 import pygame
-from PIL import Image # Not needed for normal execution
+# from PIL import Image # Not needed for normal execution
 
 # legend = Legend(screen, screen_width, screen_height)
 # legend.keyLightUp(button)
