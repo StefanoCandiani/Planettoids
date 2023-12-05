@@ -62,7 +62,8 @@ def main():
                 [(0.0, -1.0), (-0.4, -1.0), (0.0, 0.0)],
                 [(-0.4, -1.0), (-0.5, -0.2), (0.0, 0.0)],
                 [(-0.5, -0.2), (-0.3, 0.0), (0.0, 0.0)],
-                [(-0.3, 0.0), (0.0, 1.0), (0.0, 0.0)]
+                [(-0.3, 0.0), (0.0, 1.0), (0.0, 0.0)],
+                2
             ],
             [
                 [(-0.1, 0.8), (0.4, 1.0), (0.0, 0.0)],
@@ -77,7 +78,8 @@ def main():
                 [(-0.85, -0.5), (-0.7, 0.1), (0.0, 0.0)],
                 [(-0.7, 0.1), (-1.0, 0.5), (0.0, 0.0)],
                 [(-1.0, 0.5), (-0.5, 1.0), (0.0, 0.0)],
-                [(-0.5, 1.0), (-0.1, 0.8), (0.0, 0.0)]
+                [(-0.5, 1.0), (-0.1, 0.8), (0.0, 0.0)],
+                2
             ],
             [
                 [(0.0, 1.0), (0.65, 0.65), (0.05, 0.5)],
@@ -90,7 +92,8 @@ def main():
                 [(-0.65, -0.45), (-0.4, -0.15), (0.0, 0.0)],
                 [(-0.4, -0.15), (-1.0, 0.0), (-0.3, 0.6)],
                 [(-0.4, -0.15), (-0.3, 0.6), (0.0, 0.0)],
-                [(-0.3, 0.6), (0.05, 0.5), (0.0, 0.0)]
+                [(-0.3, 0.6), (0.05, 0.5), (0.0, 0.0)],
+                2
             ],
             #Alien Mesh to implement
             [
@@ -102,6 +105,7 @@ def main():
                 [(0.4, -0.6), (0.5, -0.25), (0, 0)],
                 [(0.5, -0.25), (1, 0), (0, 0)],
                 [(1, 0), (0.5, 0.5), (0, 0)],
+                3
             ]
         ]
         asteroid_colors = [(96, 96, 96),(128, 128, 128),(192, 192, 192),(0x00,192,0x00)]
@@ -115,7 +119,7 @@ def main():
 
         for i in range(len(asteroid_meshes)): #NOTE:Asteroid list initialization code optimized with list comprehension
             choice = random.choice([top_spawn, bottom_spawn, left_spawn, right_spawn])
-            asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i], asteroid_color=asteroid_colors[i])]
+            asteroid_list += [Asteroid(choice[0], choice[1], random.random(), random.random(), asteroid_meshes[i][:-1], asteroid_color=asteroid_colors[i], size=asteroid_meshes[i][-1])]
 
 
         #Initialize the bullets list and variables
@@ -265,7 +269,7 @@ def main():
 
                 level_menu.level_increment(level_num+1)     # otherwise continue to next level if enter is pressed
                 if button[pygame.K_RETURN]:  # check if Enter is pressed
-                    # level_num += 1
+                    level_num += 1
                     running = False
                     continue
 
