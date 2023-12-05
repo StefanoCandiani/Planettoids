@@ -169,8 +169,8 @@ def main():
                 if tuple_mag(tuple_adder([bullets[i].get_coords(), tuple_scaler(asteroid_list[j].get_coords(), -1)])) <= bullets[i].radius + asteroid_list[j].get_mesh_scaler():
 
                     if asteroid_list[j].get_asteroid_size() > 0:
-                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1), asteroid_list[j].get_asteroid_velo()[1], asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
-                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0], (asteroid_list[j].get_asteroid_velo()[1] * -1), asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
+                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], (asteroid_list[j].get_asteroid_velo()[0] * -1) * 1.25, asteroid_list[j].get_asteroid_velo()[1] * 1.25, asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale//2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
+                        asteroid_list += [Asteroid(asteroid_list[j].get_coords()[0], asteroid_list[j].get_coords()[1], asteroid_list[j].get_asteroid_velo()[0] * 1.25, (asteroid_list[j].get_asteroid_velo()[1] * -1) * 1.25, asteroid_list[j].get_asteroid_mesh(), asteroid_list[j].mesh_scale // 2, asteroid_list[j].get_asteroid_color(), asteroid_list[j].get_asteroid_size() - 1)]
 
                     bullets = bullets[:i] + bullets[i+1:]
                     asteroid_list = asteroid_list[:j] + asteroid_list[j+1:]
