@@ -27,7 +27,7 @@ def main():
     screen_width = 800#1200
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Planettoids Beta v1.1")
+    pygame.display.set_caption("Planettoids v1.0")
 
     #Load all the background images
     bg1 = pygame.image.load("assets/800x600/Lev1 800x600.png")
